@@ -380,7 +380,7 @@
     margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
   }
   .checklist-item:hover { border-color: var(--accent); }
-  .checklist-item input { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
+  .checklist-item input { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; pointer-events: none; }
   .checklist-item label { font-size: 14px; cursor: pointer; flex: 1; }
   .checklist-item.checked { background: #f0f9f4; border-color: var(--success); }
   .checklist-item.checked label { text-decoration: line-through; color: var(--text-muted); }
@@ -1561,17 +1561,6 @@ function toggleCheck(el) {
   cb.checked = !cb.checked;
   el.classList.toggle('checked', cb.checked);
 }
-
-// Prevenir que el checkbox nativo interfiera con el onclick del div
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(function(cb) {
-    cb.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      toggleCheck(cb.closest('.checklist-item'));
-    });
-  });
-});
 
 /* MUSIC - Web Audio API Ambient */
 function toggleMusic() {
