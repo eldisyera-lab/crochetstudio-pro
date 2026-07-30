@@ -26,7 +26,7 @@
     background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
-  .app { max-width: 1200px; margin: 0 auto; padding: 16px; }
+  .app { max-width: 1200px; margin: 0 auto; padding: 16px; padding-bottom: 100px; }
   .header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 12px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
@@ -38,7 +38,7 @@
     background: var(--accent); color: #fff; font-size: 10px; font-weight: 700;
     padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
   }
-  .nav { display: flex; gap: 4px; background: var(--bg-muted); border-radius: 10px; padding: 4px; overflow-x: auto; }
+  .nav { display: flex; gap: 4px; background: var(--bg-muted); border-radius: 10px; padding: 4px; overflow-x: auto; position: relative; }
   .nav-btn {
     padding: 8px 14px; border-radius: 8px; border: none; background: transparent;
     color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s;
@@ -46,9 +46,49 @@
   }
   .nav-btn:hover { color: var(--text); }
   .nav-btn.active { background: var(--bg-card); color: var(--text); box-shadow: var(--shadow); font-weight: 500; }
+
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-menu {
+    position: absolute; top: calc(100% + 6px); right: 0; background: var(--bg-card);
+    border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg);
+    display: none; min-width: 200px; z-index: 50; overflow: hidden;
+  }
+  .nav-dropdown.open .nav-dropdown-menu { display: block; animation: fadeIn 0.2s ease; }
+  .nav-dropdown-menu button {
+    display: block; width: 100%; text-align: left; padding: 10px 16px;
+    border: none; background: none; font-family: inherit; font-size: 13px;
+    color: var(--text-secondary); cursor: pointer; border-bottom: 1px solid var(--border);
+  }
+  .nav-dropdown-menu button:last-child { border-bottom: none; }
+  .nav-dropdown-menu button:hover { background: var(--bg-raised); color: var(--text); }
+
   .screen { display: none; animation: fadeIn 0.3s ease; }
   .screen.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* FAB */
+  .fab-container { position: fixed; bottom: 24px; right: 24px; z-index: 90; }
+  .fab-main {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: #fff;
+    border: none; box-shadow: 0 4px 12px rgba(196,92,62,0.4); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: transform 0.3s, box-shadow 0.3s;
+    font-size: 24px; font-family: inherit;
+  }
+  .fab-main:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(196,92,62,0.5); }
+  .fab-container.open .fab-main { transform: rotate(45deg); }
+  .fab-options {
+    position: absolute; bottom: 70px; right: 0; display: flex; flex-direction: column; gap: 10px;
+    opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.3s ease;
+  }
+  .fab-container.open .fab-options { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .fab-option {
+    display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 30px; padding: 8px 16px; box-shadow: var(--shadow-lg); cursor: pointer;
+    font-size: 13px; white-space: nowrap; color: var(--text); font-family: inherit;
+    transition: all 0.2s;
+  }
+  .fab-option:hover { border-color: var(--accent); color: var(--accent); }
+  .fab-option svg { width: 18px; height: 18px; flex-shrink: 0; }
 
   .hero { text-align: center; padding: 40px 16px 32px; }
   .hero h1 { font-size: 34px; font-weight: 600; margin-bottom: 10px; }
@@ -101,7 +141,7 @@
   .tag-popular { background: var(--accent-light); color: var(--accent); }
   .tag-new { background: #d4edda; color: var(--success); }
 
-  .editor-wrap { display: grid; grid-template-columns: 230px 1fr 280px; gap: 16px; }
+  .editor-wrap { display: grid; grid-template-columns: 240px 1fr 280px; gap: 16px; }
   @media (max-width: 980px) { .editor-wrap { grid-template-columns: 1fr; } }
   .panel {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
@@ -125,6 +165,19 @@
   .stitch-opt:hover { border-color: var(--accent); }
   .stitch-opt.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
 
+  .yarn-opt {
+    aspect-ratio: 1; border: 2px solid var(--border); border-radius: 50%;
+    cursor: pointer; transition: all 0.15s; position: relative;
+  }
+  .yarn-opt:hover { transform: scale(1.1); border-color: var(--text); }
+  .yarn-opt.selected { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 4px var(--accent); }
+  .yarn-opt::after {
+    content: attr(data-name); position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+    font-size: 9px; color: var(--text-muted); white-space: nowrap; opacity: 0; transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .yarn-opt:hover::after { opacity: 1; }
+
   .grid-area { display: flex; flex-direction: column; align-items: center; }
   .grid-controls { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; justify-content: center; }
   .grid-controls button {
@@ -141,11 +194,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; font-weight: 600; cursor: crosshair; transition: background 0.05s;
   }
-  .cell:hover { background: var(--bg-muted); }
-  .cell.filled { background: var(--accent-light); color: var(--accent); }
-  .cell.filled-alt { background: #e8f0e8; color: var(--success); }
-  .cell.filled-dark { background: #e8e0f0; color: #6b4c9a; }
-  .cell.filled-warm { background: #fff3cd; color: #856404; }
+  .cell:hover { filter: brightness(0.95); }
 
   .info-form input, .info-form select, .info-form textarea {
     width: 100%; padding: 8px 10px; margin-bottom: 10px;
@@ -177,7 +226,6 @@
   }
   .mini-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; }
   .mini-cell { width: 14px; height: 14px; background: var(--bg-card); border-radius: 1px; }
-  .mini-cell.on { background: var(--accent); }
   .d-status {
     position: absolute; top: 8px; right: 8px; padding: 3px 10px; border-radius: 20px;
     font-size: 11px; font-weight: 600;
@@ -237,6 +285,37 @@
   .price-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
   .price-row .price { font-weight: 600; color: var(--accent); }
 
+  .accordion { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; background: var(--bg-card); }
+  .accordion-header {
+    padding: 16px; background: var(--bg-raised); cursor: pointer; display: flex;
+    justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px;
+    user-select: none; transition: background 0.2s;
+  }
+  .accordion-header:hover { background: var(--bg-muted); }
+  .accordion-header .chevron { transition: transform 0.3s; color: var(--text-muted); }
+  .accordion.open .accordion-header .chevron { transform: rotate(180deg); }
+  .accordion-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.35s ease;
+    padding: 0 16px; font-size: 13px; color: var(--text-secondary); line-height: 1.7;
+  }
+  .accordion.open .accordion-body { max-height: 600px; padding: 0 16px 16px; }
+  .accordion-body p { margin-bottom: 8px; }
+  .accordion-body ul { margin-left: 18px; margin-bottom: 8px; }
+  .accordion-body li { margin-bottom: 4px; }
+  .accordion-body strong { color: var(--text); }
+
+  .guide-step {
+    display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
+  }
+  .guide-num {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;
+    flex-shrink: 0;
+  }
+  .guide-content h4 { font-size: 15px; margin-bottom: 4px; }
+  .guide-content p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
   .modal-bg {
     position: fixed; inset: 0; background: rgba(0,0,0,0.45);
     display: none; align-items: center; justify-content: center; z-index: 100;
@@ -245,7 +324,7 @@
   .modal-bg.active { display: flex; }
   .modal-box {
     background: var(--bg-card); border-radius: 16px; padding: 28px;
-    max-width: 480px; width: 90%; border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+    max-width: 520px; width: 90%; border: 1px solid var(--border); box-shadow: var(--shadow-lg);
   }
   .modal-box h3 { font-size: 18px; margin-bottom: 8px; }
   .modal-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; }
@@ -281,8 +360,63 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  .support-box {
+    background: linear-gradient(135deg, var(--accent-light), #fff);
+    border: 1px solid var(--accent-light); border-radius: var(--radius); padding: 20px; text-align: center;
+  }
+  .support-box h4 { color: var(--accent); margin-bottom: 8px; }
+  .support-box p { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+  .support-box .btn-support {
+    display: inline-block; padding: 10px 24px; background: var(--accent); color: #fff;
+    border-radius: var(--radius-sm); text-decoration: none; font-size: 14px; font-weight: 500;
+    border: none; cursor: pointer; font-family: inherit;
+  }
+  .support-box .btn-support:hover { background: var(--accent-hover); }
+
+  /* NEW v3 STYLES */
+  .checklist-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .checklist-item:hover { border-color: var(--accent); }
+  .checklist-item input { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; }
+  .checklist-item label { font-size: 14px; cursor: pointer; flex: 1; }
+  .checklist-item.checked { background: #f0f9f4; border-color: var(--success); }
+  .checklist-item.checked label { text-decoration: line-through; color: var(--text-muted); }
+
+  .stitch-count-panel {
+    margin-top: 12px; padding: 12px; background: var(--bg-raised); border-radius: var(--radius-sm);
+    font-size: 12px; max-height: 200px; overflow-y: auto;
+  }
+  .stitch-count-panel .count-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--border); }
+  .stitch-count-panel .count-row:last-child { border-bottom: none; }
+  .stitch-count-panel .warn { color: var(--danger); font-weight: 600; }
+
+  .mosaic-grid {
+    display: grid; gap: 0; margin-top: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden;
+  }
+  .mosaic-cell { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 600; }
+
+  .size-variant-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px;
+  }
+  .size-variant-card h5 { font-size: 14px; margin-bottom: 6px; }
+  .size-variant-card pre { font-size: 11px; color: var(--text-secondary); white-space: pre-wrap; background: var(--bg-muted); padding: 8px; border-radius: var(--radius-sm); }
+
+  .music-toggle {
+    position: fixed; bottom: 24px; left: 24px; z-index: 90;
+    width: 48px; height: 48px; border-radius: 50%; background: var(--bg-card);
+    border: 1px solid var(--border); box-shadow: var(--shadow); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+    transition: all 0.3s; color: var(--text-muted);
+  }
+  .music-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .music-toggle.playing { background: var(--accent); color: #fff; border-color: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(196,92,62,0.4); } 70% { box-shadow: 0 0 0 10px rgba(196,92,62,0); } 100% { box-shadow: 0 0 0 0 rgba(196,92,62,0); } }
+
   @media print {
-    .header, .nav, .panel:not(.grid-area), .modal-bg, .toast, .grid-controls { display: none !important; }
+    .header, .nav, .panel:not(.grid-area), .modal-bg, .toast, .grid-controls, .fab-container, .music-toggle { display: none !important; }
     .editor-wrap { display: block !important; }
     .grid-area { align-items: flex-start !important; }
     .stitch-grid { border: 2px solid #000 !important; }
@@ -296,8 +430,12 @@
     .cell { width: 24px; height: 24px; font-size: 9px; }
     .nav-btn { padding: 6px 10px; font-size: 12px; }
     .hero-stats { gap: 20px; }
+    .fab-container { bottom: 16px; right: 16px; }
+    .fab-main { width: 48px; height: 48px; font-size: 20px; }
+    .music-toggle { bottom: 16px; left: 16px; width: 40px; height: 40px; font-size: 16px; }
   }
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="app">
@@ -313,97 +451,68 @@
       <button class="nav-btn" onclick="showScreen('editor')">Disenar</button>
       <button class="nav-btn" onclick="showScreen('templates')">Plantillas</button>
       <button class="nav-btn" onclick="showScreen('designs')">Mis disenos</button>
-      <button class="nav-btn" onclick="showScreen('calculator')">Medidas</button>
-      <button class="nav-btn" onclick="showScreen('pricing')">Precios</button>
-      <button class="nav-btn" onclick="showScreen('symbols')">Simbolos</button>
+      <div class="nav-dropdown" id="navMore">
+        <button class="nav-btn" onclick="toggleNavDropdown()">Mas &#9662;</button>
+        <div class="nav-dropdown-menu">
+          <button onclick="showScreen('calculator'); toggleNavDropdown()">Medidas</button>
+          <button onclick="showScreen('materials'); toggleNavDropdown()">Materiales</button>
+          <button onclick="showScreen('pricing'); toggleNavDropdown()">Precios</button>
+          <button onclick="showScreen('symbols'); toggleNavDropdown()">Simbolos</button>
+          <button onclick="showScreen('guide'); toggleNavDropdown()">Guia paso a paso</button>
+          <button onclick="showScreen('inspiration'); toggleNavDropdown()">Inspiracion & Tips</button>
+          <button onclick="showScreen('faq'); toggleNavDropdown()">Soluciones / FAQ</button>
+          <button onclick="showScreen('checklist'); toggleNavDropdown()">Checklist</button>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- HOME -->
   <div class="screen active" id="screen-home">
     <div class="hero">
       <h1>Disena. Calcula. Vende.</h1>
       <p>La herramienta profesional para crear patrones de crochet comercializables. Desde blusas hasta vestidos de gala.</p>
       <div class="hero-stats">
         <div class="stat"><div class="num">12</div><div class="lbl">Puntos</div></div>
-        <div class="stat"><div class="num">6</div><div class="lbl">Tallas</div></div>
+        <div class="stat"><div class="num">16</div><div class="lbl">Colores</div></div>
         <div class="stat"><div class="num">20+</div><div class="lbl">Plantillas</div></div>
         <div class="stat"><div class="num">100%</div><div class="lbl">Offline</div></div>
       </div>
     </div>
-
     <div class="section-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
       Categorias
     </div>
     <div class="categories">
-      <div class="cat-card" onclick="startDesign('blusa')">
-        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M14 8c0-2 4-4 10-4s10 2 10 4v8c0 2-2 4-4 4h-2v24h-8V20h-2c-2 0-4-2-4-4V8z"/><path d="M14 12h-4c-2 0-4 2-4 4v4c0 2 2 4 4 4h4M34 12h4c2 0 4 2 4 4v4c0 2-2 4-4 4h-4"/>
-        </svg>
-        <h3>Blusas</h3><span>15 plantillas base</span>
-      </div>
-      <div class="cat-card" onclick="startDesign('vestido')">
-        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M16 4c0-2 5-3 8-3s8 1 8 3v10c0 2-2 3-3 3h-3v30h-6V17h-3c-1 0-3-1-3-3V4z"/><path d="M16 8h-4c-2 0-3 2-3 4v6c0 2 2 3 3 3h4M32 8h4c2 0 3 2 3 4v6c0 2-2 3-3 3h-4"/>
-        </svg>
-        <h3>Vestidos</h3><span>10 plantillas base</span>
-      </div>
-      <div class="cat-card" onclick="startDesign('top')">
-        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M16 4c0-1 3-2 8-2s8 1 8 2v6c0 1-1 2-2 2h-2v6h-8V12h-2c-1 0-2-1-2-2V4z"/><path d="M16 6h-3c-2 0-3 1-3 3v3c0 2 1 3 3 3h3M32 6h3c2 0 3 1 3 3v3c0 2-1 3-3 3h-3"/>
-        </svg>
-        <h3>Tops</h3><span>18 plantillas base</span>
-      </div>
-      <div class="cat-card" onclick="startDesign('cardigan')">
-        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M6 8h8v36H6zM34 8h8v36h-8zM14 8h20v36H14zM24 8v36"/><circle cx="24" cy="18" r="2"/><circle cx="24" cy="28" r="2"/><circle cx="24" cy="38" r="2"/>
-        </svg>
-        <h3>Cardigans</h3><span>8 plantillas base</span>
-      </div>
-      <div class="cat-card" onclick="startDesign('sueter')">
-        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M12 6c0-2 4-3 12-3s12 1 12 3v10c0 2-2 3-3 3h-3v26h-6V19h-6v26h-6V19h-3c-1 0-3-1-3-3V6z"/><path d="M12 10h-4c-2 0-3 2-3 4v6c0 2 2 3 3 3h4M36 10h4c2 0 3 2 3 4v6c0 2-2 3-3 3h-4"/>
-        </svg>
-        <h3>Sueteres</h3><span>6 plantillas base</span>
-      </div>
-      <div class="cat-card" onclick="startDesign('accesorio')">
-        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
-          <circle cx="24" cy="20" r="12"/><path d="M18 30l-6 14M30 30l6 14"/>
-        </svg>
-        <h3>Accesorios</h3><span>Bolsos, gorros, bufandas</span>
-      </div>
+      <div class="cat-card" onclick="startDesign('blusa')"><svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 8c0-2 4-4 10-4s10 2 10 4v8c0 2-2 4-4 4h-2v24h-8V20h-2c-2 0-4-2-4-4V8z"/><path d="M14 12h-4c-2 0-4 2-4 4v4c0 2 2 4 4 4h4M34 12h4c2 0 4 2 4 4v4c0 2-2 4-4 4h-4"/></svg><h3>Blusas</h3><span>15 plantillas base</span></div>
+      <div class="cat-card" onclick="startDesign('vestido')"><svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4c0-2 5-3 8-3s8 1 8 3v10c0 2-2 3-3 3h-3v30h-6V17h-3c-1 0-3-1-3-3V4z"/><path d="M16 8h-4c-2 0-3 2-3 4v6c0 2 2 3 3 3h4M32 8h4c2 0 3 2 3 4v6c0 2-2 3-3 3h-4"/></svg><h3>Vestidos</h3><span>10 plantillas base</span></div>
+      <div class="cat-card" onclick="startDesign('top')"><svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4c0-1 3-2 8-2s8 1 8 2v6c0 1-1 2-2 2h-2v6h-8V12h-2c-1 0-2-1-2-2V4z"/><path d="M16 6h-3c-2 0-3 1-3 3v3c0 2 1 3 3 3h3M32 6h3c2 0 3 1 3 3v3c0 2-1 3-3 3h-3"/></svg><h3>Tops</h3><span>18 plantillas base</span></div>
+      <div class="cat-card" onclick="startDesign('cardigan')"><svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 8h8v36H6zM34 8h8v36h-8zM14 8h20v36H14zM24 8v36"/><circle cx="24" cy="18" r="2"/><circle cx="24" cy="28" r="2"/><circle cx="24" cy="38" r="2"/></svg><h3>Cardigans</h3><span>8 plantillas base</span></div>
+      <div class="cat-card" onclick="startDesign('sueter')"><svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 6c0-2 4-3 12-3s12 1 12 3v10c0 2-2 3-3 3h-3v26h-6V19h-6v26h-6V19h-3c-1 0-3-1-3-3V6z"/><path d="M12 10h-4c-2 0-3 2-3 4v6c0 2 2 3 3 3h4M36 10h4c2 0 3 2 3 4v6c0 2-2 3-3 3h-4"/></svg><h3>Sueteres</h3><span>6 plantillas base</span></div>
+      <div class="cat-card" onclick="startDesign('accesorio')"><svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="24" cy="20" r="12"/><path d="M18 30l-6 14M30 30l6 14"/></svg><h3>Accesorios</h3><span>Bolsos, gorros, bufandas</span></div>
     </div>
-
     <div class="section-title">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       Acciones rapidas
     </div>
     <div class="quick-actions">
-      <button class="q-btn" onclick="showScreen('editor')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-        <div><div>Nuevo patron en blanco</div><div class="q-desc">Grid libre para cualquier diseno</div></div>
-      </button>
-      <button class="q-btn" onclick="showScreen('templates')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        <div><div>Usar plantilla</div><div class="q-desc">Empieza con una silueta base</div></div>
-      </button>
-      <button class="q-btn" onclick="showScreen('calculator')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg>
-        <div><div>Calcular medidas</div><div class="q-desc">Puntos y vueltas exactos</div></div>
-      </button>
-      <button class="q-btn" onclick="showScreen('pricing')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <div><div>Precios sugeridos</div><div class="q-desc">Cuanto cobrar por tu patron</div></div>
-      </button>
+      <button class="q-btn" onclick="showScreen('editor')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg><div><div>Nuevo patron en blanco</div><div class="q-desc">Grid libre para cualquier diseno</div></div></button>
+      <button class="q-btn" onclick="showScreen('templates')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><div><div>Usar plantilla</div><div class="q-desc">Empieza con una silueta base</div></div></button>
+      <button class="q-btn" onclick="showScreen('calculator')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg><div><div>Calcular medidas</div><div class="q-desc">Puntos y vueltas exactos</div></div></button>
+      <button class="q-btn" onclick="showScreen('materials')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z"/><path d="M12 6v6l4 2"/></svg><div><div>Calcular materiales</div><div class="q-desc">Cuantos ovillos necesitas</div></div></button>
+      <button class="q-btn" onclick="showScreen('pricing')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><div><div>Precios sugeridos</div><div class="q-desc">Cuanto cobrar por tu patron</div></div></button>
+      <button class="q-btn" onclick="showScreen('checklist')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><div><div>Checklist antes de vender</div><div class="q-desc">No olvides nada importante</div></div></button>
     </div>
   </div>
 
+  <!-- TEMPLATES -->
   <div class="screen" id="screen-templates">
     <h2 style="font-size:20px; margin-bottom:16px;">Plantillas base</h2>
-    <p style="color:var(--text-secondary); margin-bottom:16px;">Selecciona una silueta para empezar. Luego personalizala con tu propio diseno de puntos.</p>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Selecciona una silueta para empezar. Luego personalizala con tu propio diseno de puntos y colores.</p>
     <div class="templates-grid" id="templatesGrid"></div>
   </div>
 
+  <!-- EDITOR -->
   <div class="screen" id="screen-editor">
     <div class="editor-wrap">
       <div class="panel">
@@ -429,13 +538,26 @@
         <button class="tool-btn" onclick="undo()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>Deshacer
         </button>
+        <button class="tool-btn" onclick="downloadPNG()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l4 4 4-4"/><path d="M12 8v8"/></svg>Descargar PNG
+        </button>
+        <button class="tool-btn" onclick="toggleMosaic()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Modo mosaico
+        </button>
+        <button class="tool-btn" onclick="countStitches()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Contar puntos
+        </button>
+        <button class="tool-btn" onclick="generateSizeVariants()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Otras tallas
+        </button>
         <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
           <h3>Puntos de crochet</h3>
           <div class="palette" id="stitchPalette"></div>
         </div>
         <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
-          <h3>Colores</h3>
+          <h3>Colores de hilo</h3>
           <div class="palette" id="colorPalette"></div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:18px; text-align:center;" id="currentYarnName">Rojo Terracota</div>
         </div>
       </div>
 
@@ -452,9 +574,21 @@
         <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">
           <span id="gridLabel">16 x 16 celdas</span> - Arrastra para dibujar - Tactil compatible
         </div>
+        <div class="stitch-count-panel" id="stitchCountPanel" style="display:none;">
+          <h4 style="font-size:12px; margin-bottom:6px; color:var(--text);">Conteo por vuelta</h4>
+          <div id="stitchCountContent"></div>
+        </div>
         <div class="instructions" id="instructionsPanel" style="display:none;">
           <h4>Instrucciones generadas automaticamente</h4>
           <pre id="instructionsText"></pre>
+        </div>
+        <div id="mosaicPanel" style="display:none; margin-top:16px; width:100%;">
+          <h4 style="font-size:12px; margin-bottom:8px; color:var(--text);">Vista previa en mosaico (repeticion 4x4)</h4>
+          <div style="overflow-x:auto;"><div class="mosaic-grid" id="mosaicGrid"></div></div>
+        </div>
+        <div id="sizeVariantsPanel" style="display:none; margin-top:16px; width:100%;">
+          <h4 style="font-size:12px; margin-bottom:8px; color:var(--text);">Instrucciones escaladas para otras tallas</h4>
+          <div id="sizeVariantsContent"></div>
         </div>
       </div>
 
@@ -493,12 +627,14 @@
     </div>
   </div>
 
+  <!-- DESIGNS -->
   <div class="screen" id="screen-designs">
     <h2 style="font-size:20px; margin-bottom:8px;">Mis disenos</h2>
-    <p style="color:var(--text-secondary); margin-bottom:16px;">Todos tus patrones guardados localmente. Se mantienen incluso si cierras el navegador.</p>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Todos tus patrones guardados localmente con sus diagramas reales.</p>
     <div class="designs-grid" id="designsGrid"></div>
   </div>
 
+  <!-- CALCULATOR -->
   <div class="screen" id="screen-calculator">
     <h2 style="font-size:20px; margin-bottom:8px; text-align:center;">Calculadora de medidas</h2>
     <p style="color:var(--text-secondary); text-align:center; margin-bottom:16px;">Ingresa tu muestra (gauge) y obtiene los puntos y vueltas exactos.</p>
@@ -527,32 +663,65 @@
         </div>
       </div>
       <div class="calc-row">
-        <div class="field">
-          <label>Puntos por 10 cm</label>
-          <input type="number" id="calcGauge" value="18" min="1" oninput="calculate()" />
-        </div>
-        <div class="field">
-          <label>Vueltas por 10 cm</label>
-          <input type="number" id="calcRows" value="24" min="1" oninput="calculate()" />
-        </div>
+        <div class="field"><label>Puntos por 10 cm</label><input type="number" id="calcGauge" value="18" min="1" oninput="calculate()" /></div>
+        <div class="field"><label>Vueltas por 10 cm</label><input type="number" id="calcRows" value="24" min="1" oninput="calculate()" /></div>
       </div>
       <div class="calc-row">
-        <div class="field">
-          <label>Ancho deseado (cm)</label>
-          <input type="number" id="calcWidth" value="50" min="1" oninput="calculate()" />
-        </div>
-        <div class="field">
-          <label>Largo deseado (cm)</label>
-          <input type="number" id="calcHeight" value="60" min="1" oninput="calculate()" />
-        </div>
+        <div class="field"><label>Ancho deseado (cm)</label><input type="number" id="calcWidth" value="50" min="1" oninput="calculate()" /></div>
+        <div class="field"><label>Largo deseado (cm)</label><input type="number" id="calcHeight" value="60" min="1" oninput="calculate()" /></div>
       </div>
       <div class="calc-result" id="calcResult"></div>
     </div>
   </div>
 
+  <!-- MATERIALS -->
+  <div class="screen" id="screen-materials">
+    <h2 style="font-size:20px; margin-bottom:8px; text-align:center;">Calculadora de materiales</h2>
+    <p style="color:var(--text-secondary); text-align:center; margin-bottom:16px;">Saber cuanto hilo comprar antes de empezar evita frustraciones y sobrantes.</p>
+    <div class="calc-wrap">
+      <div class="calc-row">
+        <div class="field"><label>Tipo de prenda</label>
+          <select id="matType" onchange="calculateMaterials()">
+            <option value="blusa">Blusa manga corta</option>
+            <option value="vestido">Vestido largo</option>
+            <option value="top">Top / Crop top</option>
+            <option value="cardigan">Cardigan</option>
+            <option value="sueter">Sueter</option>
+            <option value="gorro">Gorro</option>
+            <option value="bufanda">Bufanda</option>
+            <option value="bolso">Bolso</option>
+          </select>
+        </div>
+        <div class="field"><label>Talla</label>
+          <select id="matSize" onchange="calculateMaterials()">
+            <option value="xs">XS</option><option value="s">S</option><option value="m" selected>M</option>
+            <option value="l">L</option><option value="xl">XL</option><option value="xxl">XXL</option>
+          </select>
+        </div>
+      </div>
+      <div class="calc-row">
+        <div class="field"><label>Peso del ovillo (gramos)</label><input type="number" id="matBallWeight" value="50" min="1" oninput="calculateMaterials()" /></div>
+        <div class="field"><label>Metros por ovillo</label><input type="number" id="matBallMeters" value="125" min="1" oninput="calculateMaterials()" /></div>
+      </div>
+      <div class="calc-row">
+        <div class="field"><label>Grosor del hilo</label>
+          <select id="matThickness" onchange="calculateMaterials()">
+            <option value="fingering">Fingering / Sock (muy fino)</option>
+            <option value="dk" selected>DK / Light Worsted</option>
+            <option value="worsted">Worsted / Aran</option>
+            <option value="bulky">Bulky / Grueso</option>
+          </select>
+        </div>
+        <div class="field"><label>Numero de colores</label><input type="number" id="matColors" value="2" min="1" oninput="calculateMaterials()" /></div>
+      </div>
+      <div class="calc-result" id="matResult"></div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
   <div class="screen" id="screen-pricing">
     <h2 style="font-size:20px; margin-bottom:8px;">Guia de precios sugeridos</h2>
-    <p style="color:var(--text-secondary); margin-bottom:16px;">Estos son rangos estimados basados en el mercado actual de patrones digitales de crochet (Etsy, Ravelry, etc.).</p>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Rangos estimados basados en el mercado actual de patrones digitales (Etsy, Ravelry, etc.).</p>
     <div class="pricing-card">
       <h4>Por dificultad del patron</h4>
       <div class="price-row"><span>Principiante (1-2 puntos basicos)</span><span class="price">2.50 - 4.00 EUR</span></div>
@@ -581,13 +750,128 @@
     </div>
   </div>
 
+  <!-- SYMBOLS -->
   <div class="screen" id="screen-symbols">
     <h2 style="font-size:20px; margin-bottom:8px;">Simbolos de crochet internacionales</h2>
-    <p style="color:var(--text-secondary); margin-bottom:16px;">Referencia rapida con nombres en espanol y abreviaturas en ingles (usadas en patrones internacionales).</p>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Referencia rapida con nombres en espanol y abreviaturas en ingles.</p>
     <div class="symbols-grid" id="symbolsGrid"></div>
   </div>
+
+  <!-- GUIDE -->
+  <div class="screen" id="screen-guide">
+    <h2 style="font-size:20px; margin-bottom:8px;">Guia paso a paso: De tejedora a disenadora</h2>
+    <p style="color:var(--text-secondary); margin-bottom:20px;">Nunca has disenado un patron? Sigue estos pasos y crea tu primer diseno profesional hoy mismo.</p>
+    <div class="guide-step"><div class="guide-num">1</div><div class="guide-content"><h4>Elige tu base</h4><p>Empieza por una <strong>plantilla</strong> o un <strong>grid en blanco</strong>. Las plantillas te dan la silueta correcta para cada talla.</p></div></div>
+    <div class="guide-step"><div class="guide-num">2</div><div class="guide-content"><h4>Selecciona puntos y colores</h4><p>En el panel izquierdo elige el <strong>punto</strong> y el <strong>color de hilo</strong>. Cada celda representa un punto. Usa "Espejo" para simetria automatica.</p></div></div>
+    <div class="guide-step"><div class="guide-num">3</div><div class="guide-content"><h4>Dibuja tu patron</h4><p>Haz clic o arrastra sobre el grid. En movil, usa el dedo. Prueba combinaciones sin gastar hilo. Usa <strong>Deshacer</strong> o <strong>Borrar</strong> si te equivocas.</p></div></div>
+    <div class="guide-step"><div class="guide-num">4</div><div class="guide-content"><h4>Calcula las medidas reales</h4><p>Ve a <strong>Medidas</strong>, ingresa tu muestra (gauge) y la app te dice exactamente cuantos puntos y vueltas necesitas.</p></div></div>
+    <div class="guide-step"><div class="guide-num">5</div><div class="guide-content"><h4>Genera instrucciones automaticas</h4><p>Presiona <strong>"Generar instrucciones"</strong>. La app traduce tu grid a texto paso a paso. Edita las notas para agregar detalles.</p></div></div>
+    <div class="guide-step"><div class="guide-num">6</div><div class="guide-content"><h4>Guarda y exporta para vender</h4><p>Llena la informacion del patron y guarda. Usa <strong>Exportar</strong> para obtener un PDF listo para Etsy o email.</p></div></div>
+    <div class="support-box" style="margin-top:24px;"><h4>Consejo de oro para empezar</h4><p>No intentes crear algo perfecto el primer dia. Empieza copiando un patron sencillo que ya conozcas en el grid. La practica hace al diseno.</p></div>
+  </div>
+
+  <!-- INSPIRATION -->
+  <div class="screen" id="screen-inspiration">
+    <h2 style="font-size:20px; margin-bottom:8px;">Inspiracion & Tips creativos</h2>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Recomendaciones para despertar tu creatividad y mejorar la calidad de tus patrones.</p>
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Como elegir combinaciones de colores que venden</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><p>Las combinaciones mas exitosas:</p><ul><li><strong>Monocromaticas:</strong> Un solo color en diferentes intensidades.</li><li><strong>Complementarias:</strong> Colores opuestos en la rueda cromatica (azul marino + terracota).</li><li><strong>Tierra + vivo:</strong> Beige con mostaza, verde bosque o borgona.</li><li><strong>Pastel soft:</strong> Lavanda, menta, durazno y crema. Muy populares en primavera-verano.</li></ul><p><strong>Tip:</strong> Arma tu paleta en la app antes de comprar hilos.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Tecnicas para crear texturas que destacan</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><ul><li><strong>Abanicos (W):</strong> Ideales para bordes de blusas y escotes.</li><li><strong>Pinas (&#60;&#62;):</strong> Volumen 3D. Usalas en flores o mangas.</li><li><strong>Puntos puff (*):</strong> Perfectos para gorros y bufandas con relieve.</li><li><strong>Cadenas (-):</strong> Calados elegantes en vestidos de verano.</li></ul><p><strong>Ejercicio:</strong> Dibuja solo con puff y cadenas 10 minutos. Veras formas interesantes.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Como adaptar una talla sin perder el diseno</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><ul><li>Para <strong>agrandar</strong>: aumenta los paneles laterales, no el motivo central.</li><li>Para <strong>achicar</strong>: reduce los espacios entre motivos repetitivos.</li><li>Los <strong>multiplos</strong> son clave: si tu motivo mide 6 puntos, el total debe ser multiplo de 6.</li><li>Guarda una version "base" en talla M y luego crea variantes.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ideas para nombres de patrones que atraen clientes</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><ul><li><strong>Lugares:</strong> "Top Riviera Maya", "Cardigan Otono en Paris".</li><li><strong>Sensaciones:</strong> "Brisa de verano", "Atardecer bohemio".</li><li><strong>Tecnicas + adjetivo:</strong> "Encaje sedoso", "Crop top texturizado".</li><li><strong>Nivel:</strong> "Vestido facil talla unica", "Blusa rapida principiante".</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Consejos para fotografiar tu tejido</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><ul><li><strong>Luz natural</strong> cerca de una ventana. Nunca flash directo.</li><li><strong>Fondo neutro:</strong> madera clara, pared blanca o lino.</li><li><strong>Modelo o maniqui:</strong> Las prendas puestas venden 3x mas.</li><li><strong>Detalles:</strong> Primer plano del punto estrella.</li><li><strong>Consistencia:</strong> Misma paleta de filtros para todos tus patrones.</li></ul></div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="screen" id="screen-faq">
+    <h2 style="font-size:20px; margin-bottom:8px;">Soluciones a problemas comunes</h2>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Respuestas rapidas a las dudas mas frecuentes cuando empiezas a disenar patrones.</p>
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Me quedo sin puntos al final de la vuelta, que hago?</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><ul><li>Revisa si tu motivo necesita un <strong>multiplo par o impar</strong> de puntos.</li><li>Agrega o quita <strong>1-2 puntos de borde</strong> (cadenas o puntos bajos) para ajustar.</li><li>En el editor, usa "-" (espacio/chain) como relleno decorativo en bordes.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Mi tension es muy apretada/suelta y las medidas no coinciden</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><ul><li><strong>Cambia el gancho:</strong> Si apretado, sube 0.5 mm. Si suelto, baja 0.5 mm.</li><li><strong>Recalcula todo:</strong> Mide tu muestra de 10x10 cm y actualiza la calculadora.</li><li><strong>No adivines:</strong> Teje al menos 15x15 cm para medir bien.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Puedo vender los patrones que creo con esta app?</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><p><strong>Si, absolutamente.</strong> Todo lo que disenas es 100% tuyo.</p><ul><li>Incluye tu nombre/marca en cada patron.</li><li>Especifica si es para uso personal o venta del producto fisico.</li><li>No compartas el archivo editable; vende solo el PDF final.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Como imprimo el patron para tenerlo en papel?</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><ul><li>En el editor, haz clic en <strong>"Exportar para vender"</strong> y elige PDF.</li><li>Se abrira la ventana de impresion. Selecciona <strong>"Guardar como PDF"</strong>.</li><li>El PDF incluira el diagrama, instrucciones y datos de autor.</li><li>Desde tu telefono, comparte el PDF por WhatsApp o email.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Se borro mi diseno / No encuentro un patron guardado</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><p>Los disenos se guardan en el <strong>almacenamiento local</strong> de tu navegador.</p><ul><li><strong>No borres los datos</strong> del navegador/app o perderas todo.</li><li>Exporta patrones importantes como <strong>PDF o TXT</strong> como respaldo.</li><li>Si cambias de telefono, exporta antes de cambiar.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>No se que puntos usar para mi primer patron</span><span class="chevron">&#9662;</span></div>
+      <div class="accordion-body"><p>Formula infalible para tu primer diseno:</p><ul><li><strong>Cuerpo:</strong> Medio punto (X) o punto alto (T). Faciles de contar.</li><li><strong>Borde:</strong> Cadena (.) para flexibilidad en cuello y mangas.</li><li><strong>Detalle:</strong> Una fila de abanicos (W) en el bajo.</li><li><strong>Color:</strong> Maximo 2 colores. Uno base y uno de acento.</li></ul></div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="screen" id="screen-checklist">
+    <h2 style="font-size:20px; margin-bottom:8px;">Checklist antes de publicar</h2>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Asegurate de no olvidar nada antes de subir tu patron a la venta.</p>
+    <div id="checklistContainer">
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c1"><label for="c1">Teji una muestra de 10x10 cm y verifique mis puntos/vueltas</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c2"><label for="c2">Calcule los materiales necesarios (ovillos, metros)</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c3"><label for="c3">Genere las instrucciones paso a paso y las revise</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c4"><label for="c4">Verifique que cada vuelta tenga el numero correcto de puntos</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c5"><label for="c5">Saque foto del producto terminado con buena luz</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c6"><label for="c6">Defini el precio segun la guia de precios sugeridos</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c7"><label for="c7">Agregue mi marca de agua / nombre de autor</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c8"><label for="c8">Especifico el tipo de hilo, gancho y nivel de dificultad</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c9"><label for="c9">Inclui todas las tallas que quiero vender</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c10"><label for="c10">Exporte el patron en PDF y guarde una copia de respaldo</label></div>
+    </div>
+    <div class="calc-tip" style="margin-top:16px;">Consejo: No publiques un patron que no hayas tejido tu misma al menos una vez. La experiencia real te permite detectar errores que el grid no muestra.</div>
+  </div>
+
 </div>
 
+<!-- FAB -->
+<div class="fab-container" id="fabContainer">
+  <div class="fab-options">
+    <button class="fab-option" onclick="showScreen('guide'); toggleFab()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Guia rapida</span>
+    </button>
+    <button class="fab-option" onclick="showScreen('inspiration'); toggleFab()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/><path d="M9 21h6"/></svg>
+      <span>Tips creativos</span>
+    </button>
+    <button class="fab-option" onclick="openSupportModal(); toggleFab()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      <span>Soporte / Ayuda</span>
+    </button>
+  </div>
+  <button class="fab-main" onclick="toggleFab()">+</button>
+</div>
+
+<!-- Music Toggle -->
+<button class="music-toggle" id="musicToggle" onclick="toggleMusic()" title="Musica ambiental">
+  <span id="musicIcon">&#9835;</span>
+</button>
+
+<!-- MODALS -->
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal-box" id="modalBox">
     <h3 id="modalTitle">Exportar</h3>
@@ -600,17 +884,40 @@
   </div>
 </div>
 
+<div class="modal-bg" id="supportModalBg" onclick="if(event.target===this)closeSupportModal()">
+  <div class="modal-box">
+    <h3>Soporte CrochetStudio Pro</h3>
+    <p style="font-size:14px; color:var(--text-secondary); line-height:1.6; margin-bottom:16px;">
+      Tienes dudas sobre como usar la app, necesitas ideas para un patron o no sabes como calcular algo? Estoy aqui para ayudarte.
+    </p>
+    <div class="support-box" style="margin-bottom:16px;">
+      <h4>Contactar a Kimi (IA)</h4>
+      <p>Abre Kimi en tu navegador y hazme cualquier pregunta sobre crochet, diseno de patrones o esta app.</p>
+      <button class="btn-support" onclick="window.open('https://kimi.moonshot.cn','_blank')">Abrir Kimi en navegador</button>
+    </div>
+    <p style="font-size:12px; color:var(--text-muted); text-align:center;">Mensaje predefinido para copiar y pegar:</p>
+    <textarea readonly style="width:100%; padding:10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--bg-muted); font-size:12px; margin-top:8px; resize:none;" rows="3" id="supportMsg">Hola Kimi, estoy usando CrochetStudio Pro y tengo una duda sobre...</textarea>
+    <button class="btn-secondary" style="margin-top:8px;" onclick="copySupportMsg()">Copiar mensaje</button>
+    <div class="modal-actions" style="margin-top:16px;">
+      <button onclick="closeSupportModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-let currentTool = 'draw', currentStitch = 'X', currentColor = 'accent';
+let currentTool = 'draw', currentStitch = 'X';
+let currentYarn = { name: 'Rojo Terracota', hex: '#c0392b', bg: '#f5d6d3' };
 let isDrawing = false, gridRows = 16, gridCols = 16, history = [];
-let designs = JSON.parse(localStorage.getItem('crochet_designs') || '[]');
+let designs = JSON.parse(localStorage.getItem('crochet_designs_v3') || '[]');
+let musicPlaying = false, audioCtx = null, musicNodes = [];
+
 if (!designs.length) {
   designs = [
-    { name: 'Blusa encaje verano', category: 'Blusa', size: 'M', status: 'published', date: '2026-07-28', yarn: 'Algodon fingering', hook: '3.5 mm', level: 'Intermedio', price: '5.00', author: 'Crochet para Aprender' },
-    { name: 'Vestido bohemio largo', category: 'Vestido', size: 'L', status: 'draft', date: '2026-07-25', yarn: 'Hilo de seda', hook: '4.0 mm', level: 'Avanzado', price: '8.50', author: 'Crochet para Aprender' },
-    { name: 'Top halter elegante', category: 'Top', size: 'S', status: 'published', date: '2026-07-20', yarn: 'Algodon DK', hook: '4.5 mm', level: 'Principiante', price: '3.50', author: 'Crochet para Aprender' },
+    { name: 'Blusa encaje verano', category: 'Blusa', size: 'M', status: 'published', date: '2026-07-28', yarn: 'Algodon fingering', hook: '3.5 mm', level: 'Intermedio', price: '5.00', author: 'Crochet para Aprender', grid: null },
+    { name: 'Vestido bohemio largo', category: 'Vestido', size: 'L', status: 'draft', date: '2026-07-25', yarn: 'Hilo de seda', hook: '4.0 mm', level: 'Avanzado', price: '8.50', author: 'Crochet para Aprender', grid: null },
+    { name: 'Top halter elegante', category: 'Top', size: 'S', status: 'published', date: '2026-07-20', yarn: 'Algodon DK', hook: '4.5 mm', level: 'Principiante', price: '3.50', author: 'Crochet para Aprender', grid: null },
   ];
   saveDesigns();
 }
@@ -630,11 +937,23 @@ const stitches = [
   { sym: '-', name: 'Espacio', desc: 'sp', video: 'Hueco decorativo' },
 ];
 
-const colors = [
-  { name: 'Terracota', cls: 'accent' },
-  { name: 'Verde', cls: 'success' },
-  { name: 'Violeta', cls: 'dark' },
-  { name: 'Dorado', cls: 'warm' },
+const yarnColors = [
+  { name: 'Rojo Terracota', hex: '#c0392b', bg: '#f5d6d3' },
+  { name: 'Azul Marino', hex: '#2c3e50', bg: '#d6e0f5' },
+  { name: 'Verde Bosque', hex: '#27ae60', bg: '#d4f5e0' },
+  { name: 'Dorado Viejo', hex: '#b7950b', bg: '#fcf3cf' },
+  { name: 'Rosa Palo', hex: '#d98880', bg: '#fadbd8' },
+  { name: 'Lavanda', hex: '#8e44ad', bg: '#e8daef' },
+  { name: 'Naranja Calabaza', hex: '#e67e22', bg: '#fdebd0' },
+  { name: 'Gris Perla', hex: '#7f8c8d', bg: '#e5e8e8' },
+  { name: 'Turquesa', hex: '#16a085', bg: '#d1f2eb' },
+  { name: 'Vino Borgona', hex: '#922b21', bg: '#f2d7d5' },
+  { name: 'Mostaza', hex: '#d4ac0d', bg: '#fcf3cf' },
+  { name: 'Coral', hex: '#ec7063', bg: '#fadbd8' },
+  { name: 'Piedra Arena', hex: '#a04000', bg: '#edbb99' },
+  { name: 'Menta', hex: '#1abc9c', bg: '#d1f2eb' },
+  { name: 'Ciruela', hex: '#6c3483', bg: '#d7bde2' },
+  { name: 'Crudo Natural', hex: '#a0937d', bg: '#f9f7f2' },
 ];
 
 const templates = [
@@ -652,9 +971,19 @@ const templates = [
   { name: 'Gorro slouchy', category: 'Accesorio', icon: 'accesorio', popular: true },
 ];
 
+const sizeData = {
+  xs: { busto: 82, cintura: 64, cadera: 88, largo: 52, manga: 52 },
+  s: { busto: 88, cintura: 70, cadera: 94, largo: 55, manga: 54 },
+  m: { busto: 92, cintura: 76, cadera: 96, largo: 58, manga: 56 },
+  l: { busto: 98, cintura: 82, cadera: 102, largo: 61, manga: 58 },
+  xl: { busto: 104, cintura: 88, cadera: 108, largo: 64, manga: 60 },
+  xxl: { busto: 110, cintura: 94, cadera: 114, largo: 67, manga: 62 },
+};
+
 function init() {
-  renderPalette(); renderColorPalette(); renderGrid(); renderSymbols();
-  renderTemplates(); renderDesigns(); calculate(); saveHistory();
+  renderPalette(); renderColorPalette(); renderSymbols();
+  renderTemplates(); renderDesigns(); calculate(); calculateMaterials();
+  renderGrid(); saveHistory();
 }
 
 function renderPalette() {
@@ -666,8 +995,8 @@ function renderPalette() {
 
 function renderColorPalette() {
   const p = document.getElementById('colorPalette');
-  p.innerHTML = colors.map((c, i) =>
-    '<div class="stitch-opt ' + (i===0?'selected':'') + '" data-color="' + c.cls + '" title="' + c.name + '" onclick="selectColor(this)">' + (i===0?'&#10003;':'') + '</div>'
+  p.innerHTML = yarnColors.map((c, i) =>
+    '<div class="yarn-opt ' + (i===0?'selected':'') + '" data-index="' + i + '" data-name="' + c.name + '" style="background:' + c.hex + '" onclick="selectColor(this)"></div>'
   ).join('');
 }
 
@@ -703,6 +1032,33 @@ function loadTemplate(name, category) {
   showToast('Plantilla cargada. Personalizala ahora.');
 }
 
+function getGridState() {
+  return Array.from(document.querySelectorAll('.cell')).map(c => ({
+    t: c.textContent,
+    hex: c.dataset.hex || '',
+    bg: c.dataset.bg || ''
+  }));
+}
+
+function setGridState(state) {
+  const cells = document.querySelectorAll('.cell');
+  cells.forEach((c, i) => {
+    if (state[i]) {
+      c.textContent = state[i].t;
+      c.style.color = state[i].hex;
+      c.style.backgroundColor = state[i].bg;
+      c.dataset.hex = state[i].hex;
+      c.dataset.bg = state[i].bg;
+    } else {
+      c.textContent = '';
+      c.style.color = '';
+      c.style.backgroundColor = '';
+      c.dataset.hex = '';
+      c.dataset.bg = '';
+    }
+  });
+}
+
 function renderGrid() {
   const g = document.getElementById('stitchGrid');
   g.innerHTML = '';
@@ -733,27 +1089,29 @@ document.addEventListener('mouseup', () => isDrawing = false);
 function paintCell(cell) {
   if (currentTool === 'draw') {
     cell.textContent = currentStitch;
-    let cls = 'cell filled';
-    if (currentColor === 'success') cls += '-alt';
-    else if (currentColor === 'dark') cls += '-dark';
-    else if (currentColor === 'warm') cls += '-warm';
-    cell.className = cls;
+    cell.style.color = currentYarn.hex;
+    cell.style.backgroundColor = currentYarn.bg;
+    cell.dataset.hex = currentYarn.hex;
+    cell.dataset.bg = currentYarn.bg;
   } else if (currentTool === 'erase') {
-    cell.textContent = ''; cell.className = 'cell';
+    cell.textContent = '';
+    cell.style.color = '';
+    cell.style.backgroundColor = '';
+    cell.dataset.hex = '';
+    cell.dataset.bg = '';
   } else if (currentTool === 'fill') {
     document.querySelectorAll('.cell').forEach(c => {
       c.textContent = currentStitch;
-      let cls = 'cell filled';
-      if (currentColor === 'success') cls += '-alt';
-      else if (currentColor === 'dark') cls += '-dark';
-      else if (currentColor === 'warm') cls += '-warm';
-      c.className = cls;
+      c.style.color = currentYarn.hex;
+      c.style.backgroundColor = currentYarn.bg;
+      c.dataset.hex = currentYarn.hex;
+      c.dataset.bg = currentYarn.bg;
     });
   }
 }
 
 function saveHistory() {
-  const state = Array.from(document.querySelectorAll('.cell')).map(c => ({t:c.textContent, cls:c.className}));
+  const state = getGridState();
   if (history.length > 30) history.shift();
   history.push(state);
 }
@@ -761,28 +1119,27 @@ function saveHistory() {
 function undo() {
   if (history.length < 2) return;
   history.pop();
-  const state = history[history.length-1];
-  document.querySelectorAll('.cell').forEach((c,i) => { c.textContent = state[i].t; c.className = state[i].cls; });
+  setGridState(history[history.length-1]);
   showToast('Deshacer');
 }
 
 function resizeGrid(cols, rows) { saveHistory(); gridCols = cols; gridRows = rows; renderGrid(); saveHistory(); }
-function clearGrid() { saveHistory(); document.querySelectorAll('.cell').forEach(c => { c.textContent = ''; c.className = 'cell'; }); saveHistory(); }
+function clearGrid() { saveHistory(); document.querySelectorAll('.cell').forEach(c => { c.textContent = ''; c.style.color=''; c.style.backgroundColor=''; c.dataset.hex=''; c.dataset.bg=''; }); saveHistory(); }
 
 function mirrorH() {
   saveHistory();
   const cells = Array.from(document.querySelectorAll('.cell'));
   const grid = [];
-  for (let r = 0; r < gridRows; r++) { grid[r] = []; for (let c = 0; c < gridCols; c++) { const cell = cells[r*gridCols+c]; grid[r][c] = { text: cell.textContent, cls: cell.className }; } }
-  for (let r = 0; r < gridRows; r++) { for (let c = 0; c < gridCols; c++) { const mc = gridCols-1-c; const cell = cells[r*gridCols+c]; const src = grid[r][mc]; cell.textContent = src.text; cell.className = src.cls; } }
+  for (let r = 0; r < gridRows; r++) { grid[r] = []; for (let c = 0; c < gridCols; c++) { const cell = cells[r*gridCols+c]; grid[r][c] = { text: cell.textContent, hex: cell.dataset.hex||'', bg: cell.dataset.bg||'' }; } }
+  for (let r = 0; r < gridRows; r++) { for (let c = 0; c < gridCols; c++) { const mc = gridCols-1-c; const cell = cells[r*gridCols+c]; const src = grid[r][mc]; cell.textContent = src.text; cell.style.color=src.hex; cell.style.backgroundColor=src.bg; cell.dataset.hex=src.hex; cell.dataset.bg=src.bg; } }
 }
 
 function mirrorV() {
   saveHistory();
   const cells = Array.from(document.querySelectorAll('.cell'));
   const grid = [];
-  for (let r = 0; r < gridRows; r++) { grid[r] = []; for (let c = 0; c < gridCols; c++) { const cell = cells[r*gridCols+c]; grid[r][c] = { text: cell.textContent, cls: cell.className }; } }
-  for (let r = 0; r < gridRows; r++) { for (let c = 0; c < gridCols; c++) { const mr = gridRows-1-r; const cell = cells[r*gridCols+c]; const src = grid[mr][c]; cell.textContent = src.text; cell.className = src.cls; } }
+  for (let r = 0; r < gridRows; r++) { grid[r] = []; for (let c = 0; c < gridCols; c++) { const cell = cells[r*gridCols+c]; grid[r][c] = { text: cell.textContent, hex: cell.dataset.hex||'', bg: cell.dataset.bg||'' }; } }
+  for (let r = 0; r < gridRows; r++) { for (let c = 0; c < gridCols; c++) { const mr = gridRows-1-r; const cell = cells[r*gridCols+c]; const src = grid[mr][c]; cell.textContent = src.text; cell.style.color=src.hex; cell.style.backgroundColor=src.bg; cell.dataset.hex=src.hex; cell.dataset.bg=src.bg; } }
 }
 
 function setTool(tool) {
@@ -798,19 +1155,24 @@ function selectStitch(el) {
 }
 
 function selectColor(el) {
-  currentColor = el.dataset.color;
-  document.querySelectorAll('#colorPalette .stitch-opt').forEach(o => { o.classList.remove('selected'); o.innerHTML = ''; });
-  el.classList.add('selected'); el.innerHTML = '&#10003;';
+  const idx = parseInt(el.dataset.index);
+  currentYarn = yarnColors[idx];
+  document.querySelectorAll('#colorPalette .yarn-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('currentYarnName').textContent = currentYarn.name;
 }
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const idx = ['home','editor','templates','designs','calculator','pricing','symbols'].indexOf(id);
-  if (idx >= 0) document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  const map = {home:0, editor:1, templates:2, designs:3};
+  if (map[id] !== undefined) {
+    document.querySelectorAll('.nav-btn')[map[id]].classList.add('active');
+  }
   if (id === 'designs') renderDesigns();
   if (id === 'templates') renderTemplates();
+  window.scrollTo(0,0);
 }
 
 function startDesign(type) {
@@ -819,15 +1181,41 @@ function startDesign(type) {
   showScreen('editor');
 }
 
-function saveDesigns() { localStorage.setItem('crochet_designs', JSON.stringify(designs)); }
+function saveDesigns() { localStorage.setItem('crochet_designs_v3', JSON.stringify(designs)); }
+
+function renderMiniGrid(gridState, container) {
+  if (!gridState || !gridState.length) {
+    let html = '';
+    for(let j=0;j<64;j++) {
+      const yc = yarnColors[Math.floor(Math.random()*yarnColors.length)];
+      html += '<div class="mini-cell" style="background:' + yc.hex + '"></div>';
+    }
+    container.innerHTML = html;
+    return;
+  }
+  const rows = Math.sqrt(gridState.length) || 8;
+  const cols = Math.ceil(gridState.length / rows);
+  container.style.gridTemplateColumns = 'repeat(' + Math.min(cols, 8) + ', 1fr)';
+  let html = '';
+  for (let i = 0; i < Math.min(gridState.length, 64); i++) {
+    const cell = gridState[i];
+    if (cell && cell.hex) {
+      html += '<div class="mini-cell" style="background:' + cell.hex + '">' + (cell.t ? '<span style="font-size:8px;color:#fff;text-shadow:0 0 2px rgba(0,0,0,0.5)">' + cell.t + '</span>' : '') + '</div>';
+    } else {
+      html += '<div class="mini-cell"></div>';
+    }
+  }
+  container.innerHTML = html;
+}
 
 function renderDesigns() {
   const c = document.getElementById('designsGrid');
   if (!designs.length) { c.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column:1/-1;">Aun no tienes disenos guardados.</p>'; return; }
-  c.innerHTML = designs.map((d, i) =>
-    '<div class="design-card">' +
+  c.innerHTML = designs.map((d, i) => {
+    const gridId = 'miniGrid_' + i;
+    return '<div class="design-card">' +
     '<div class="d-preview">' +
-    '<div class="mini-grid">' + Array(64).fill(0).map((_,j) => '<div class="mini-cell ' + (Math.random()>0.65?'on':'') + '"></div>').join('') + '</div>' +
+    '<div class="mini-grid" id="' + gridId + '"></div>' +
     '<span class="d-status status-' + d.status + '">' + (d.status==='published'?'Publicado':'Borrador') + '</span>' +
     '</div>' +
     '<div class="d-info">' +
@@ -838,8 +1226,14 @@ function renderDesigns() {
     '<div class="d-actions">' +
     '<button onclick="editDesign(' + i + ')">Editar</button>' +
     '<button class="primary" onclick="exportDesign(' + i + ')">Exportar</button>' +
-    '</div></div>'
-  ).join('');
+    '</div></div>';
+  }).join('');
+  setTimeout(() => {
+    designs.forEach((d, i) => {
+      const el = document.getElementById('miniGrid_' + i);
+      if (el) renderMiniGrid(d.grid, el);
+    });
+  }, 50);
 }
 
 function savePattern() {
@@ -853,10 +1247,13 @@ function savePattern() {
     price: document.getElementById('patternPrice').value,
     author: document.getElementById('patternAuthor').value,
     notes: document.getElementById('patternNotes').value,
-    status: 'draft', date: new Date().toISOString().slice(0,10)
+    status: 'draft', date: new Date().toISOString().slice(0,10),
+    grid: getGridState(),
+    gridRows: gridRows,
+    gridCols: gridCols
   };
   designs.unshift(d); saveDesigns();
-  showToast('Patron guardado');
+  showToast('Patron guardado con diagrama');
 }
 
 function editDesign(i) {
@@ -870,6 +1267,11 @@ function editDesign(i) {
   document.getElementById('patternPrice').value = d.price || '';
   document.getElementById('patternAuthor').value = d.author || '';
   document.getElementById('patternNotes').value = d.notes || '';
+  if (d.grid) {
+    if (d.gridCols && d.gridRows) { gridCols = d.gridCols; gridRows = d.gridRows; }
+    renderGrid();
+    setGridState(d.grid);
+  }
   showScreen('editor');
 }
 
@@ -946,14 +1348,122 @@ function generateInstructions() {
   showToast('Instrucciones generadas');
 }
 
-const sizeData = {
-  xs: { busto: 82, cintura: 64, cadera: 88, largo: 52, manga: 52 },
-  s: { busto: 88, cintura: 70, cadera: 94, largo: 55, manga: 54 },
-  m: { busto: 92, cintura: 76, cadera: 96, largo: 58, manga: 56 },
-  l: { busto: 98, cintura: 82, cadera: 102, largo: 61, manga: 58 },
-  xl: { busto: 104, cintura: 88, cadera: 108, largo: 64, manga: 60 },
-  xxl: { busto: 110, cintura: 94, cadera: 114, largo: 67, manga: 62 },
-};
+function countStitches() {
+  const cells = Array.from(document.querySelectorAll('.cell'));
+  let html = '';
+  let hasError = false;
+  for (let r = 0; r < gridRows; r++) {
+    let counts = {};
+    let total = 0;
+    for (let c = 0; c < gridCols; c++) {
+      const sym = cells[r * gridCols + c].textContent || '-';
+      counts[sym] = (counts[sym] || 0) + 1;
+      if (sym !== '-') total++;
+    }
+    let detail = Object.entries(counts).map(([k,v]) => (v>1 ? v : '') + k).join(' ');
+    let warn = '';
+    if (total !== gridCols && total > 0) {
+      warn = ' <span class="warn">(' + total + '/' + gridCols + ' puntos)</span>';
+      hasError = true;
+    }
+    html += '<div class="count-row"><span>V' + (r+1) + '</span><span>' + detail + warn + '</span></div>';
+  }
+  if (hasError) {
+    html += '<div style="margin-top:8px; color:var(--danger); font-size:11px;">Algunas vueltas no llenan todo el ancho. Revisa los multiplos de tu motivo.</div>';
+  }
+  document.getElementById('stitchCountContent').innerHTML = html;
+  document.getElementById('stitchCountPanel').style.display = 'block';
+  showToast('Conteo de puntos listo');
+}
+
+function toggleMosaic() {
+  const panel = document.getElementById('mosaicPanel');
+  if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  const cells = Array.from(document.querySelectorAll('.cell'));
+  const g = document.getElementById('mosaicGrid');
+  g.innerHTML = '';
+  g.style.gridTemplateColumns = 'repeat(' + (gridCols * 4) + ', 20px)';
+  for (let mr = 0; mr < gridRows * 4; mr++) {
+    for (let mc = 0; mc < gridCols * 4; mc++) {
+      const srcR = mr % gridRows;
+      const srcC = mc % gridCols;
+      const src = cells[srcR * gridCols + srcC];
+      const div = document.createElement('div');
+      div.className = 'mosaic-cell';
+      div.textContent = src.textContent;
+      div.style.color = src.dataset.hex || '';
+      div.style.backgroundColor = src.dataset.bg || 'var(--bg-card)';
+      g.appendChild(div);
+    }
+  }
+  showToast('Mosaico generado');
+}
+
+function generateSizeVariants() {
+  const panel = document.getElementById('sizeVariantsPanel');
+  panel.style.display = 'block';
+  const cells = Array.from(document.querySelectorAll('.cell'));
+  const baseSize = document.getElementById('patternSize').value || 'M';
+  const sizes = ['XS','S','M','L','XL','XXL'];
+  const baseIdx = sizes.indexOf(baseSize);
+  let html = '';
+  sizes.forEach((sz, idx) => {
+    if (sz === baseSize) return;
+    const diff = idx - baseIdx;
+    const factor = 1 + (diff * 0.08);
+    let text = '';
+    for (let r = 0; r < gridRows; r++) {
+      let rowText = 'V' + (r+1) + ': ';
+      let count = 0, last = '';
+      for (let c = 0; c < gridCols; c++) {
+        const sym = cells[r * gridCols + c].textContent || '-';
+        if (sym === last) { count++; }
+        else { if (last) rowText += (Math.round(count * factor) > 1 ? Math.round(count * factor) : '') + last + ' '; last = sym; count = 1; }
+      }
+      if (last) rowText += (Math.round(count * factor) > 1 ? Math.round(count * factor) : '') + last;
+      text += rowText + '\n';
+    }
+    html += '<div class="size-variant-card"><h5>Talla ' + sz + ' (factor ' + factor.toFixed(2) + 'x)</h5><pre>' + text + '</pre></div>';
+  });
+  document.getElementById('sizeVariantsContent').innerHTML = html;
+  showToast('Variantes de talla generadas');
+}
+
+function downloadPNG() {
+  const grid = document.getElementById('stitchGrid');
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const cellW = 40, cellH = 40;
+  canvas.width = gridCols * cellW;
+  canvas.height = gridRows * cellH;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const cells = Array.from(document.querySelectorAll('.cell'));
+  cells.forEach((c, i) => {
+    const r = Math.floor(i / gridCols);
+    const col = i % gridCols;
+    const x = col * cellW;
+    const y = r * cellH;
+    ctx.fillStyle = c.dataset.bg || '#ffffff';
+    ctx.fillRect(x, y, cellW, cellH);
+    ctx.strokeStyle = '#e0ddd8';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, cellW, cellH);
+    if (c.textContent) {
+      ctx.fillStyle = c.dataset.hex || '#1a1a1a';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(c.textContent, x + cellW/2, y + cellH/2);
+    }
+  });
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = (document.getElementById('patternName').value.trim() || 'patron') + '_diagrama.png';
+  a.click();
+  showToast('Diagrama PNG descargado');
+}
 
 function calculate() {
   const size = document.getElementById('calcSize').value;
@@ -983,11 +1493,131 @@ function calculate() {
     '<div class="calc-tip">Consejo: Teje una muestra de 10x10 cm y ajusta segun tu tension real.</div>';
 }
 
+const matFactors = {
+  blusa: {base:180, mult:1}, vestido:{base:450, mult:1.3}, top:{base:120, mult:0.7},
+  cardigan:{base:280, mult:1.15}, sueter:{base:260, mult:1.1}, gorro:{base:80, mult:0.5},
+  bufanda:{base:150, mult:0.8}, bolso:{base:200, mult:0.9}
+};
+const sizeMults = {xs:0.85, s:0.92, m:1, l:1.08, xl:1.16, xxl:1.25};
+const thickMults = {fingering:0.7, dk:1, worsted:1.3, bulky:1.8};
+
+function calculateMaterials() {
+  const type = document.getElementById('matType').value;
+  const size = document.getElementById('matSize').value;
+  const ballWeight = parseFloat(document.getElementById('matBallWeight').value) || 50;
+  const ballMeters = parseFloat(document.getElementById('matBallMeters').value) || 125;
+  const thick = document.getElementById('matThickness').value;
+  const colors = parseInt(document.getElementById('matColors').value) || 1;
+  const mf = matFactors[type] || {base:200, mult:1};
+  const sm = sizeMults[size] || 1;
+  const tm = thickMults[thick] || 1;
+  const totalMeters = Math.round(mf.base * sm * tm);
+  const metersPerColor = Math.round(totalMeters / colors);
+  const ballsPerColor = Math.ceil(metersPerColor / ballMeters);
+  const totalBalls = ballsPerColor * colors;
+  const totalGrams = totalBalls * ballWeight;
+  document.getElementById('matResult').innerHTML =
+    '<h3>Materiales estimados: ' + type.charAt(0).toUpperCase() + type.slice(1) + ' talla ' + size.toUpperCase() + '</h3>' +
+    '<div class="res-item"><span>Total de metros necesarios</span><span class="val">' + totalMeters + ' m</span></div>' +
+    '<div class="res-item"><span>Metros por color</span><span class="val">' + metersPerColor + ' m</span></div>' +
+    '<div class="res-item"><span>Ovillos por color (' + ballWeight + 'g / ' + ballMeters + 'm)</span><span class="val">' + ballsPerColor + '</span></div>' +
+    '<div class="res-item"><span>Total de ovillos (' + colors + ' colores)</span><span class="val">' + totalBalls + '</span></div>' +
+    '<div class="res-item"><span>Peso total aproximado</span><span class="val">' + totalGrams + ' g</span></div>' +
+    '<div class="calc-tip">Compra 1 ovillo extra por color como margen de seguridad. Es mejor sobrar que quedarse a mitad.</div>';
+}
+
+function toggleAccordion(header) {
+  header.parentElement.classList.toggle('open');
+}
+function toggleFab() {
+  document.getElementById('fabContainer').classList.toggle('open');
+}
+function toggleNavDropdown() {
+  document.getElementById('navMore').classList.toggle('open');
+}
+function openSupportModal() {
+  document.getElementById('supportModalBg').classList.add('active');
+}
+function closeSupportModal() {
+  document.getElementById('supportModalBg').classList.remove('active');
+}
+function copySupportMsg() {
+  const ta = document.getElementById('supportMsg');
+  ta.select();
+  document.execCommand('copy');
+  showToast('Mensaje copiado al portapapeles');
+}
 function closeModal() { document.getElementById('modalBg').classList.remove('active'); }
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function toggleCheck(el) {
+  const cb = el.querySelector('input');
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+}
+
+/* MUSIC - Web Audio API Ambient */
+function toggleMusic() {
+  const btn = document.getElementById('musicToggle');
+  const icon = document.getElementById('musicIcon');
+  if (musicPlaying) {
+    stopMusic();
+    musicPlaying = false;
+    btn.classList.remove('playing');
+    icon.textContent = '\u266B';
+    showToast('Musica pausada');
+  } else {
+    startMusic();
+    musicPlaying = true;
+    btn.classList.add('playing');
+    icon.textContent = '\u266A';
+    showToast('Musica ambiental activada');
+  }
+}
+
+function startMusic() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  const scale = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+  function playNote(freq, time, duration, vol) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(vol, time + 0.5);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(time);
+    osc.stop(time + duration);
+    musicNodes.push(osc, gain);
+  }
+  function schedule() {
+    if (!musicPlaying) return;
+    const now = audioCtx.currentTime;
+    for (let i = 0; i < 8; i++) {
+      const note = scale[Math.floor(Math.random() * scale.length)];
+      const time = now + i * 2 + Math.random();
+      const dur = 3 + Math.random() * 2;
+      const vol = 0.03 + Math.random() * 0.02;
+      playNote(note, time, dur, vol);
+      if (Math.random() > 0.5) {
+        playNote(note * 1.5, time + 0.5, dur * 0.8, vol * 0.5);
+      }
+    }
+    setTimeout(schedule, 16000);
+  }
+  schedule();
+}
+
+function stopMusic() {
+  musicNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  musicNodes = [];
 }
 
 if ('serviceWorker' in navigator) {
