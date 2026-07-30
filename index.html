@@ -1562,87 +1562,126 @@ function toggleCheck(el) {
   el.classList.toggle('checked', cb.checked);
 }
 
-/* MUSIC - Web Audio API Ambient v2 */
-let masterGain = null, musicInterval = null, musicNoteIndex = 0;
+/* MUSIC - Web Audio API v3 - Ultra Audible */
+let audioCtx = null, masterGain = null, musicTimer = null;
 
 function toggleMusic() {
   const btn = document.getElementById('musicToggle');
   const icon = document.getElementById('musicIcon');
+
   if (musicPlaying) {
     stopMusic();
     musicPlaying = false;
     btn.classList.remove('playing');
     icon.textContent = '♫';
     showToast('Música pausada');
-  } else {
-    startMusic();
-    musicPlaying = true;
-    btn.classList.add('playing');
-    icon.textContent = '♪';
-    showToast('Música ambiental activada');
+    return;
   }
-}
 
-function startMusic() {
-  if (!audioCtx) {
+  // Crear AudioContext fresco en cada inicio (evita problemas de suspend)
+  if (!audioCtx || audioCtx.state === 'closed') {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  // Master gain con volumen ALTO
+  if (!masterGain) {
     masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.45;
+    masterGain.gain.value = 0.85;
     masterGain.connect(audioCtx.destination);
   }
 
-  function begin() {
-    // Escala pentatónica mayor de Do (relajante y armónica)
-    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-    const pattern = [0, 2, 4, 2, 0, 3, 5, 3, 1, 4, 2, 5, 0, 4];
+  // Resume y luego iniciar
+  const startPlayback = function() {
+    console.log('AudioContext state:', audioCtx.state);
+    console.log('Master gain value:', masterGain.gain.value);
 
-    function playTone(freq, time, duration, volume) {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0, time);
-      gain.gain.linearRampToValueAtTime(volume, time + 0.08);
-      gain.gain.setValueAtTime(volume, time + duration - 0.2);
-      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start(time);
-      osc.stop(time + duration);
-      musicNodes.push({osc, gain});
-    }
+    // BEEP DE PRUEBA INMEDIATO (imposible de no escuchar)
+    const testOsc = audioCtx.createOscillator();
+    const testGain = audioCtx.createGain();
+    testOsc.type = 'triangle';
+    testOsc.frequency.value = 523.25; // Do5
+    testGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    testGain.gain.linearRampToValueAtTime(0.6, audioCtx.currentTime + 0.05);
+    testGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    testOsc.connect(testGain);
+    testGain.connect(masterGain);
+    testOsc.start(audioCtx.currentTime);
+    testOsc.stop(audioCtx.currentTime + 0.4);
 
-    function playNextNote() {
-      if (!musicPlaying) return;
-      const now = audioCtx.currentTime;
-      const note = scale[pattern[musicNoteIndex % pattern.length]];
-      const dur = 1.4 + Math.random() * 0.4;
-      const vol = 0.30 + Math.random() * 0.15;
-      playTone(note, now, dur, vol);
-      playTone(note * 1.5, now + 0.06, dur * 0.7, vol * 0.25);
-      playTone(note * 2, now + 0.12, dur * 0.5, vol * 0.12);
-      musicNoteIndex++;
-      musicInterval = setTimeout(playNextNote, 1100 + Math.random() * 300);
-    }
+    // Iniciar patrón musical después del beep
+    setTimeout(playAmbientPattern, 500);
 
-    playNextNote();
-  }
+    musicPlaying = true;
+    btn.classList.add('playing');
+    icon.textContent = '♪';
+    showToast('Música activada - volumen alto');
+  };
 
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume().then(begin).catch(begin);
+    audioCtx.resume().then(startPlayback).catch(function(e) {
+      console.error('Resume failed:', e);
+      startPlayback();
+    });
   } else {
-    begin();
+    startPlayback();
   }
 }
 
+function playAmbientPattern() {
+  if (!musicPlaying || !audioCtx) return;
+
+  const now = audioCtx.currentTime;
+  // Escala pentatónica mayor (Do, Re, Mi, Sol, La, Do)
+  const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+  // Patrón tipo "canción de cuna" simple
+  const pattern = [0, 2, 4, 2, 0, 3, 5, 3, 1, 4, 2, 0];
+  const idx = Math.floor(Date.now() / 1200) % pattern.length;
+  const note = scale[pattern[idx]];
+
+  // Nota principal - VOLUMEN ALTO
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'triangle'; // Más armónicos = más audible
+  osc.frequency.value = note;
+  gain.gain.setValueAtTime(0, now);
+  gain.gain.linearRampToValueAtTime(0.50, now + 0.06); // Attack rápido
+  gain.gain.setValueAtTime(0.50, now + 0.8); // Sustain
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 1.6); // Release
+  osc.connect(gain);
+  gain.connect(masterGain);
+  osc.start(now);
+  osc.stop(now + 1.6);
+  musicNodes.push({osc, gain});
+
+  // Quinta perfecta como acompañamiento (más suave)
+  const osc2 = audioCtx.createOscillator();
+  const gain2 = audioCtx.createGain();
+  osc2.type = 'sine';
+  osc2.frequency.value = note * 1.5;
+  gain2.gain.setValueAtTime(0, now + 0.1);
+  gain2.gain.linearRampToValueAtTime(0.20, now + 0.2);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
+  osc2.connect(gain2);
+  gain2.connect(masterGain);
+  osc2.start(now + 0.1);
+  osc2.stop(now + 1.4);
+  musicNodes.push({osc: osc2, gain: gain2});
+
+  // Programar siguiente nota
+  musicTimer = setTimeout(playAmbientPattern, 1200);
+}
+
 function stopMusic() {
-  if (musicInterval) { clearTimeout(musicInterval); musicInterval = null; }
-  musicNodes.forEach(n => {
-    try { n.osc.stop(); } catch(e){}
-    try { n.gain.disconnect(); } catch(e){}
-    try { n.osc.disconnect(); } catch(e){}
-  });
-  musicNodes = [];
+  if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
+  if (musicNodes) {
+    musicNodes.forEach(function(n) {
+      try { n.osc.stop(); } catch(e){}
+      try { n.gain.disconnect(); } catch(e){}
+      try { n.osc.disconnect(); } catch(e){}
+    });
+    musicNodes = [];
+  }
+  // NO cerrar el audioCtx, solo detener las notas
 }
 
 if ('serviceWorker' in navigator) {
