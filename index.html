@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#c45c3e">
+<meta name="description" content="Disenador profesional de patrones de crochet. Funciona offline.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CrochetStudio Pro">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.svg">
+<title>CrochetStudio Pro</title>
+<style>
+  :root {
+    --bg: #faf9f7; --bg-card: #ffffff; --bg-muted: #f0eeeb; --bg-raised: #f7f6f4;
+    --text: #1a1a1a; --text-secondary: #5c5c5c; --text-muted: #8a8a8a;
+    --border: #e0ddd8; --accent: #c45c3e; --accent-light: #f5e6e1; --accent-hover: #a84d32;
+    --success: #3a8c5d; --warning: #c9a227; --danger: #c0392b;
+    --radius: 12px; --radius-sm: 8px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06); --shadow-lg: 0 8px 24px rgba(0,0,0,0.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app { max-width: 1200px; margin: 0 auto; padding: 16px; }
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 0 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 600; }
+  .logo svg { width: 32px; height: 32px; }
+  .badge-pro {
+    background: var(--accent); color: #fff; font-size: 10px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .nav { display: flex; gap: 4px; background: var(--bg-muted); border-radius: 10px; padding: 4px; overflow-x: auto; }
+  .nav-btn {
+    padding: 8px 14px; border-radius: 8px; border: none; background: transparent;
+    color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s;
+    font-family: inherit; white-space: nowrap;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { background: var(--bg-card); color: var(--text); box-shadow: var(--shadow); font-weight: 500; }
+  .screen { display: none; animation: fadeIn 0.3s ease; }
+  .screen.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hero { text-align: center; padding: 40px 16px 32px; }
+  .hero h1 { font-size: 34px; font-weight: 600; margin-bottom: 10px; }
+  .hero p { color: var(--text-secondary); font-size: 17px; max-width: 560px; margin: 0 auto 24px; }
+  .hero-stats { display: flex; justify-content: center; gap: 32px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat .num { font-size: 28px; font-weight: 600; color: var(--accent); }
+  .stat .lbl { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .section-title { font-size: 18px; font-weight: 600; margin: 28px 0 14px; display: flex; align-items: center; gap: 8px; }
+  .section-title svg { width: 20px; height: 20px; color: var(--accent); }
+
+  .categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .cat-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.2s;
+  }
+  .cat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .cat-card .icon { width: 48px; height: 48px; margin: 0 auto 12px; color: var(--accent); }
+  .cat-card h3 { font-size: 15px; margin-bottom: 3px; }
+  .cat-card span { font-size: 12px; color: var(--text-muted); }
+
+  .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .q-btn {
+    display: flex; align-items: center; gap: 12px; padding: 16px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    color: var(--text); font-size: 14px; cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .q-btn:hover { border-color: var(--accent); background: var(--bg-raised); }
+  .q-btn svg { width: 22px; height: 22px; flex-shrink: 0; color: var(--accent); }
+  .q-btn .q-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  .templates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .template-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; cursor: pointer; transition: all 0.2s; position: relative;
+  }
+  .template-card:hover { border-color: var(--accent); box-shadow: var(--shadow-lg); }
+  .template-card .t-preview {
+    height: 100px; background: var(--bg-muted); border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 10px; overflow: hidden;
+  }
+  .template-card .t-preview svg { width: 60px; height: 60px; color: var(--text-muted); }
+  .template-card h4 { font-size: 14px; margin-bottom: 4px; }
+  .template-card p { font-size: 12px; color: var(--text-muted); }
+  .template-card .t-tag {
+    position: absolute; top: 10px; right: 10px; padding: 2px 8px; border-radius: 20px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+  }
+  .tag-popular { background: var(--accent-light); color: var(--accent); }
+  .tag-new { background: #d4edda; color: var(--success); }
+
+  .editor-wrap { display: grid; grid-template-columns: 230px 1fr 280px; gap: 16px; }
+  @media (max-width: 980px) { .editor-wrap { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px;
+  }
+  .panel h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; }
+  .tool-btn {
+    width: 100%; padding: 10px 12px; margin-bottom: 6px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--bg-muted); color: var(--text);
+    font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: all 0.15s; font-family: inherit;
+  }
+  .tool-btn:hover { border-color: var(--accent); }
+  .tool-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+  .tool-btn svg { width: 16px; height: 16px; }
+  .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+  .stitch-opt {
+    aspect-ratio: 1; border: 2px solid var(--border); border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-size: 15px; font-weight: 600; background: var(--bg-muted); transition: all 0.15s;
+  }
+  .stitch-opt:hover { border-color: var(--accent); }
+  .stitch-opt.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+  .grid-area { display: flex; flex-direction: column; align-items: center; }
+  .grid-controls { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; justify-content: center; }
+  .grid-controls button {
+    padding: 5px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--bg-muted); font-size: 12px; cursor: pointer; font-family: inherit;
+  }
+  .grid-controls button:hover { border-color: var(--accent); }
+  .stitch-grid {
+    display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); overflow: hidden; user-select: none; touch-action: none;
+  }
+  .cell {
+    width: 30px; height: 30px; background: var(--bg-card);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; cursor: crosshair; transition: background 0.05s;
+  }
+  .cell:hover { background: var(--bg-muted); }
+  .cell.filled { background: var(--accent-light); color: var(--accent); }
+  .cell.filled-alt { background: #e8f0e8; color: var(--success); }
+  .cell.filled-dark { background: #e8e0f0; color: #6b4c9a; }
+  .cell.filled-warm { background: #fff3cd; color: #856404; }
+
+  .info-form input, .info-form select, .info-form textarea {
+    width: 100%; padding: 8px 10px; margin-bottom: 10px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg-muted); color: var(--text); font-size: 13px; font-family: inherit;
+  }
+  .info-form label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .btn-primary {
+    width: 100%; padding: 10px; border-radius: var(--radius-sm); border: none;
+    background: var(--accent); color: #fff; font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; font-family: inherit;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-secondary {
+    width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--bg-muted); color: var(--text); font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; font-family: inherit; margin-top: 8px;
+  }
+  .btn-secondary:hover { border-color: var(--accent); }
+
+  .designs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+  .design-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden; transition: all 0.2s;
+  }
+  .design-card:hover { box-shadow: var(--shadow-lg); border-color: var(--accent); }
+  .d-preview {
+    height: 160px; background: var(--bg-muted); display: flex; align-items: center; justify-content: center; position: relative;
+  }
+  .mini-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; }
+  .mini-cell { width: 14px; height: 14px; background: var(--bg-card); border-radius: 1px; }
+  .mini-cell.on { background: var(--accent); }
+  .d-status {
+    position: absolute; top: 8px; right: 8px; padding: 3px 10px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .status-draft { background: #fff3cd; color: #856404; }
+  .status-published { background: #d4edda; color: var(--success); }
+  .d-info { padding: 14px; }
+  .d-info h4 { font-size: 15px; margin-bottom: 4px; }
+  .d-info p { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+  .d-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tag { padding: 3px 8px; border-radius: 6px; font-size: 11px; background: var(--bg-muted); color: var(--text-secondary); }
+  .d-actions { display: flex; gap: 8px; padding: 0 14px 14px; }
+  .d-actions button {
+    flex: 1; padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    background: var(--bg-muted); font-size: 12px; cursor: pointer; font-family: inherit;
+  }
+  .d-actions button:hover { border-color: var(--accent); }
+  .d-actions button.primary { background: var(--text); color: #fff; border-color: var(--text); }
+
+  .calc-wrap { max-width: 560px; margin: 0 auto; }
+  .calc-row { display: flex; gap: 12px; margin-bottom: 12px; }
+  .calc-row .field { flex: 1; }
+  .calc-row label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+  .calc-row input, .calc-row select {
+    width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--bg-card); font-size: 14px; font-family: inherit;
+  }
+  .calc-result {
+    margin-top: 20px; padding: 20px; border-radius: var(--radius);
+    background: var(--bg-card); border: 1px solid var(--border);
+  }
+  .calc-result h3 { font-size: 16px; margin-bottom: 14px; }
+  .res-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .res-item:last-child { border-bottom: none; }
+  .res-item .val { font-weight: 600; }
+  .calc-tip {
+    margin-top: 12px; padding: 12px; background: var(--accent-light); border-radius: var(--radius-sm);
+    font-size: 12px; color: var(--accent); border-left: 3px solid var(--accent);
+  }
+
+  .symbols-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+  .sym-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; text-align: center; transition: all 0.2s;
+  }
+  .sym-card:hover { border-color: var(--accent); }
+  .sym-card .sym { font-size: 32px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+  .sym-card .sym-name { font-size: 13px; font-weight: 500; }
+  .sym-card .sym-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .sym-card .sym-video { font-size: 11px; color: var(--accent); margin-top: 6px; cursor: pointer; }
+
+  .pricing-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; margin-bottom: 16px;
+  }
+  .pricing-card h4 { font-size: 15px; margin-bottom: 12px; }
+  .price-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .price-row .price { font-weight: 600; color: var(--accent); }
+
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: none; align-items: center; justify-content: center; z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+  .modal-bg.active { display: flex; }
+  .modal-box {
+    background: var(--bg-card); border-radius: 16px; padding: 28px;
+    max-width: 480px; width: 90%; border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+  }
+  .modal-box h3 { font-size: 18px; margin-bottom: 8px; }
+  .modal-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .modal-actions button {
+    padding: 10px 20px; border-radius: 10px; border: 1px solid var(--border);
+    background: var(--bg-muted); font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .modal-actions button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .export-options { display: grid; gap: 10px; margin: 16px 0; }
+  .export-option {
+    display: flex; align-items: center; gap: 12px; padding: 14px;
+    border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer;
+    background: var(--bg-card); transition: all 0.2s;
+  }
+  .export-option:hover { border-color: var(--accent); }
+  .export-option input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .export-option label { font-size: 14px; cursor: pointer; flex: 1; }
+  .export-option small { font-size: 11px; color: var(--text-muted); }
+
+  .instructions {
+    margin-top: 16px; padding: 16px; background: var(--bg-muted); border-radius: var(--radius);
+    font-size: 13px; line-height: 1.7;
+  }
+  .instructions h4 { font-size: 14px; margin-bottom: 8px; }
+  .instructions pre { white-space: pre-wrap; font-family: inherit; color: var(--text-secondary); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--text); color: #fff; padding: 12px 24px; border-radius: 10px;
+    font-size: 14px; z-index: 200; opacity: 0; transition: all 0.3s; box-shadow: var(--shadow-lg);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media print {
+    .header, .nav, .panel:not(.grid-area), .modal-bg, .toast, .grid-controls { display: none !important; }
+    .editor-wrap { display: block !important; }
+    .grid-area { align-items: flex-start !important; }
+    .stitch-grid { border: 2px solid #000 !important; }
+    .cell { border: 1px solid #ccc !important; }
+    .instructions { display: block !important; background: #fff !important; border: 1px solid #000 !important; }
+    body { background: #fff !important; }
+  }
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 26px; }
+    .categories { grid-template-columns: 1fr 1fr; }
+    .cell { width: 24px; height: 24px; font-size: 9px; }
+    .nav-btn { padding: 6px 10px; font-size: 12px; }
+    .hero-stats { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="logo">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="16" cy="16" r="12"/><path d="M16 4v6M16 22v6M4 16h6M22 16h6M7 7l4.2 4.2M20.8 20.8L25 25M7 25l4.2-4.2M20.8 11.2L25 7"/>
+      </svg>
+      CrochetStudio <span class="badge-pro">Pro</span>
+    </div>
+    <div class="nav">
+      <button class="nav-btn active" onclick="showScreen('home')">Inicio</button>
+      <button class="nav-btn" onclick="showScreen('editor')">Disenar</button>
+      <button class="nav-btn" onclick="showScreen('templates')">Plantillas</button>
+      <button class="nav-btn" onclick="showScreen('designs')">Mis disenos</button>
+      <button class="nav-btn" onclick="showScreen('calculator')">Medidas</button>
+      <button class="nav-btn" onclick="showScreen('pricing')">Precios</button>
+      <button class="nav-btn" onclick="showScreen('symbols')">Simbolos</button>
+    </div>
+  </div>
+
+  <div class="screen active" id="screen-home">
+    <div class="hero">
+      <h1>Disena. Calcula. Vende.</h1>
+      <p>La herramienta profesional para crear patrones de crochet comercializables. Desde blusas hasta vestidos de gala.</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="num">12</div><div class="lbl">Puntos</div></div>
+        <div class="stat"><div class="num">6</div><div class="lbl">Tallas</div></div>
+        <div class="stat"><div class="num">20+</div><div class="lbl">Plantillas</div></div>
+        <div class="stat"><div class="num">100%</div><div class="lbl">Offline</div></div>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Categorias
+    </div>
+    <div class="categories">
+      <div class="cat-card" onclick="startDesign('blusa')">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M14 8c0-2 4-4 10-4s10 2 10 4v8c0 2-2 4-4 4h-2v24h-8V20h-2c-2 0-4-2-4-4V8z"/><path d="M14 12h-4c-2 0-4 2-4 4v4c0 2 2 4 4 4h4M34 12h4c2 0 4 2 4 4v4c0 2-2 4-4 4h-4"/>
+        </svg>
+        <h3>Blusas</h3><span>15 plantillas base</span>
+      </div>
+      <div class="cat-card" onclick="startDesign('vestido')">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M16 4c0-2 5-3 8-3s8 1 8 3v10c0 2-2 3-3 3h-3v30h-6V17h-3c-1 0-3-1-3-3V4z"/><path d="M16 8h-4c-2 0-3 2-3 4v6c0 2 2 3 3 3h4M32 8h4c2 0 3 2 3 4v6c0 2-2 3-3 3h-4"/>
+        </svg>
+        <h3>Vestidos</h3><span>10 plantillas base</span>
+      </div>
+      <div class="cat-card" onclick="startDesign('top')">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M16 4c0-1 3-2 8-2s8 1 8 2v6c0 1-1 2-2 2h-2v6h-8V12h-2c-1 0-2-1-2-2V4z"/><path d="M16 6h-3c-2 0-3 1-3 3v3c0 2 1 3 3 3h3M32 6h3c2 0 3 1 3 3v3c0 2-1 3-3 3h-3"/>
+        </svg>
+        <h3>Tops</h3><span>18 plantillas base</span>
+      </div>
+      <div class="cat-card" onclick="startDesign('cardigan')">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M6 8h8v36H6zM34 8h8v36h-8zM14 8h20v36H14zM24 8v36"/><circle cx="24" cy="18" r="2"/><circle cx="24" cy="28" r="2"/><circle cx="24" cy="38" r="2"/>
+        </svg>
+        <h3>Cardigans</h3><span>8 plantillas base</span>
+      </div>
+      <div class="cat-card" onclick="startDesign('sueter')">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 6c0-2 4-3 12-3s12 1 12 3v10c0 2-2 3-3 3h-3v26h-6V19h-6v26h-6V19h-3c-1 0-3-1-3-3V6z"/><path d="M12 10h-4c-2 0-3 2-3 4v6c0 2 2 3 3 3h4M36 10h4c2 0 3 2 3 4v6c0 2-2 3-3 3h-4"/>
+        </svg>
+        <h3>Sueteres</h3><span>6 plantillas base</span>
+      </div>
+      <div class="cat-card" onclick="startDesign('accesorio')">
+        <svg class="icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="24" cy="20" r="12"/><path d="M18 30l-6 14M30 30l6 14"/>
+        </svg>
+        <h3>Accesorios</h3><span>Bolsos, gorros, bufandas</span>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Acciones rapidas
+    </div>
+    <div class="quick-actions">
+      <button class="q-btn" onclick="showScreen('editor')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        <div><div>Nuevo patron en blanco</div><div class="q-desc">Grid libre para cualquier diseno</div></div>
+      </button>
+      <button class="q-btn" onclick="showScreen('templates')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        <div><div>Usar plantilla</div><div class="q-desc">Empieza con una silueta base</div></div>
+      </button>
+      <button class="q-btn" onclick="showScreen('calculator')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5"/></svg>
+        <div><div>Calcular medidas</div><div class="q-desc">Puntos y vueltas exactos</div></div>
+      </button>
+      <button class="q-btn" onclick="showScreen('pricing')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <div><div>Precios sugeridos</div><div class="q-desc">Cuanto cobrar por tu patron</div></div>
+      </button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-templates">
+    <h2 style="font-size:20px; margin-bottom:16px;">Plantillas base</h2>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Selecciona una silueta para empezar. Luego personalizala con tu propio diseno de puntos.</p>
+    <div class="templates-grid" id="templatesGrid"></div>
+  </div>
+
+  <div class="screen" id="screen-editor">
+    <div class="editor-wrap">
+      <div class="panel">
+        <h3>Herramientas</h3>
+        <button class="tool-btn active" onclick="setTool('draw')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>Disenar
+        </button>
+        <button class="tool-btn" onclick="setTool('erase')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 20Z"/><path d="M17 17L7 7"/></svg>Borrar
+        </button>
+        <button class="tool-btn" onclick="setTool('fill')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 11l-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l8.5 8.5c.8.8 2.1.8 2.9 0l8.5-8.5a2.12 2.12 0 0 0 0-3Z"/></svg>Rellenar
+        </button>
+        <button class="tool-btn" onclick="clearGrid()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Limpiar
+        </button>
+        <button class="tool-btn" onclick="mirrorH()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M8 7l4-4 4 4M8 17l4 4 4-4"/></svg>Espejo H
+        </button>
+        <button class="tool-btn" onclick="mirrorV()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M7 8l4-4 4 4M7 16l4 4 4-4"/></svg>Espejo V
+        </button>
+        <button class="tool-btn" onclick="undo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>Deshacer
+        </button>
+        <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+          <h3>Puntos de crochet</h3>
+          <div class="palette" id="stitchPalette"></div>
+        </div>
+        <div style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+          <h3>Colores</h3>
+          <div class="palette" id="colorPalette"></div>
+        </div>
+      </div>
+
+      <div class="panel grid-area">
+        <div class="grid-controls">
+          <button onclick="resizeGrid(8,8)">8x8</button>
+          <button onclick="resizeGrid(12,12)">12x12</button>
+          <button onclick="resizeGrid(16,16)">16x16</button>
+          <button onclick="resizeGrid(20,20)">20x20</button>
+          <button onclick="resizeGrid(24,24)">24x24</button>
+          <button onclick="resizeGrid(32,32)">32x32</button>
+        </div>
+        <div class="stitch-grid" id="stitchGrid"></div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">
+          <span id="gridLabel">16 x 16 celdas</span> - Arrastra para dibujar - Tactil compatible
+        </div>
+        <div class="instructions" id="instructionsPanel" style="display:none;">
+          <h4>Instrucciones generadas automaticamente</h4>
+          <pre id="instructionsText"></pre>
+        </div>
+      </div>
+
+      <div class="panel info-form">
+        <h3>Informacion del patron</h3>
+        <label>Nombre del patron *</label>
+        <input type="text" id="patternName" placeholder="Ej: Blusa verano floral" />
+        <label>Categoria</label>
+        <select id="patternCategory">
+          <option>Blusa</option><option>Vestido</option><option>Top</option>
+          <option>Cardigan</option><option>Sueter</option><option>Accesorio</option>
+        </select>
+        <label>Talla</label>
+        <select id="patternSize">
+          <option>XS</option><option>S</option><option>M</option>
+          <option selected>L</option><option>XL</option><option>XXL</option>
+        </select>
+        <label>Tipo de hilo</label>
+        <input type="text" id="patternYarn" placeholder="Ej: Algodon fingering, 50g" />
+        <label>Gancho (mm)</label>
+        <input type="text" id="patternHook" placeholder="Ej: 3.5" />
+        <label>Dificultad</label>
+        <select id="patternLevel">
+          <option>Principiante</option><option>Intermedio</option><option>Avanzado</option>
+        </select>
+        <label>Precio sugerido (EUR)</label>
+        <input type="number" id="patternPrice" placeholder="Ej: 4.50" step="0.50" />
+        <label>Marca de agua / Autor</label>
+        <input type="text" id="patternAuthor" placeholder="Ej: Crochet para Aprender" />
+        <label>Notas / Instrucciones detalladas</label>
+        <textarea id="patternNotes" rows="4" placeholder="Instrucciones paso a paso, puntos especiales, consejos..."></textarea>
+        <button class="btn-primary" onclick="savePattern()">Guardar diseno</button>
+        <button class="btn-secondary" onclick="generateInstructions()">Generar instrucciones</button>
+        <button class="btn-secondary" onclick="showExportModal()">Exportar para vender</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-designs">
+    <h2 style="font-size:20px; margin-bottom:8px;">Mis disenos</h2>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Todos tus patrones guardados localmente. Se mantienen incluso si cierras el navegador.</p>
+    <div class="designs-grid" id="designsGrid"></div>
+  </div>
+
+  <div class="screen" id="screen-calculator">
+    <h2 style="font-size:20px; margin-bottom:8px; text-align:center;">Calculadora de medidas</h2>
+    <p style="color:var(--text-secondary); text-align:center; margin-bottom:16px;">Ingresa tu muestra (gauge) y obtiene los puntos y vueltas exactos.</p>
+    <div class="calc-wrap">
+      <div class="calc-row">
+        <div class="field">
+          <label>Talla base</label>
+          <select id="calcSize" onchange="calculate()">
+            <option value="xs">XS (82-64-88)</option>
+            <option value="s">S (88-70-94)</option>
+            <option value="m" selected>M (92-76-96)</option>
+            <option value="l">L (98-82-102)</option>
+            <option value="xl">XL (104-88-108)</option>
+            <option value="xxl">XXL (110-94-114)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tipo de prenda</label>
+          <select id="calcType" onchange="calculate()">
+            <option value="blusa">Blusa</option>
+            <option value="vestido">Vestido largo</option>
+            <option value="top">Top / Crop top</option>
+            <option value="cardigan">Cardigan abierto</option>
+            <option value="sueter">Sueter cerrado</option>
+          </select>
+        </div>
+      </div>
+      <div class="calc-row">
+        <div class="field">
+          <label>Puntos por 10 cm</label>
+          <input type="number" id="calcGauge" value="18" min="1" oninput="calculate()" />
+        </div>
+        <div class="field">
+          <label>Vueltas por 10 cm</label>
+          <input type="number" id="calcRows" value="24" min="1" oninput="calculate()" />
+        </div>
+      </div>
+      <div class="calc-row">
+        <div class="field">
+          <label>Ancho deseado (cm)</label>
+          <input type="number" id="calcWidth" value="50" min="1" oninput="calculate()" />
+        </div>
+        <div class="field">
+          <label>Largo deseado (cm)</label>
+          <input type="number" id="calcHeight" value="60" min="1" oninput="calculate()" />
+        </div>
+      </div>
+      <div class="calc-result" id="calcResult"></div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-pricing">
+    <h2 style="font-size:20px; margin-bottom:8px;">Guia de precios sugeridos</h2>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Estos son rangos estimados basados en el mercado actual de patrones digitales de crochet (Etsy, Ravelry, etc.).</p>
+    <div class="pricing-card">
+      <h4>Por dificultad del patron</h4>
+      <div class="price-row"><span>Principiante (1-2 puntos basicos)</span><span class="price">2.50 - 4.00 EUR</span></div>
+      <div class="price-row"><span>Intermedio (3-5 puntos, formas)</span><span class="price">4.00 - 7.00 EUR</span></div>
+      <div class="price-row"><span>Avanzado (encajes, estructuras complejas)</span><span class="price">7.00 - 12.00 EUR</span></div>
+      <div class="price-row"><span>Conjunto completo (top + falda)</span><span class="price">10.00 - 18.00 EUR</span></div>
+    </div>
+    <div class="pricing-card">
+      <h4>Por tipo de prenda</h4>
+      <div class="price-row"><span>Accesorio (gorro, bufanda, bolso)</span><span class="price">2.00 - 4.50 EUR</span></div>
+      <div class="price-row"><span>Top / Crop top</span><span class="price">3.50 - 6.00 EUR</span></div>
+      <div class="price-row"><span>Blusa / Camiseta</span><span class="price">4.50 - 8.00 EUR</span></div>
+      <div class="price-row"><span>Vestido corto</span><span class="price">6.00 - 10.00 EUR</span></div>
+      <div class="price-row"><span>Vestido largo / de gala</span><span class="price">8.00 - 15.00 EUR</span></div>
+      <div class="price-row"><span>Cardigan / Sueter</span><span class="price">5.00 - 10.00 EUR</span></div>
+    </div>
+    <div class="pricing-card">
+      <h4>Consejos para vender mas</h4>
+      <div style="font-size:13px; color:var(--text-secondary); line-height:1.8;">
+        <p>1. <strong>Ofrece un patron gratis</strong> para atraer clientes y mostrar calidad.</p>
+        <p>2. <strong>Paquetes de temporada:</strong> "Verano 2026" con 3 patrones por 12 EUR.</p>
+        <p>3. <strong>Patron + video tutorial:</strong> Cobra 30% mas si incluye acceso a un video privado.</p>
+        <p>4. <strong>Licencias:</strong> Vende licencia "personal" mas barata y "pequena empresa" mas cara.</p>
+        <p>5. <strong>Actualizaciones:</strong> Ofrece tallas adicionales como "extra" por 1-2 EUR mas.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="screen-symbols">
+    <h2 style="font-size:20px; margin-bottom:8px;">Simbolos de crochet internacionales</h2>
+    <p style="color:var(--text-secondary); margin-bottom:16px;">Referencia rapida con nombres en espanol y abreviaturas en ingles (usadas en patrones internacionales).</p>
+    <div class="symbols-grid" id="symbolsGrid"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" id="modalBox">
+    <h3 id="modalTitle">Exportar</h3>
+    <p id="modalText">Elige como exportar tu patron.</p>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button onclick="closeModal()">Cerrar</button>
+      <button class="primary" id="modalConfirm" onclick="closeModal()">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let currentTool = 'draw', currentStitch = 'X', currentColor = 'accent';
+let isDrawing = false, gridRows = 16, gridCols = 16, history = [];
+let designs = JSON.parse(localStorage.getItem('crochet_designs') || '[]');
+if (!designs.length) {
+  designs = [
+    { name: 'Blusa encaje verano', category: 'Blusa', size: 'M', status: 'published', date: '2026-07-28', yarn: 'Algodon fingering', hook: '3.5 mm', level: 'Intermedio', price: '5.00', author: 'Crochet para Aprender' },
+    { name: 'Vestido bohemio largo', category: 'Vestido', size: 'L', status: 'draft', date: '2026-07-25', yarn: 'Hilo de seda', hook: '4.0 mm', level: 'Avanzado', price: '8.50', author: 'Crochet para Aprender' },
+    { name: 'Top halter elegante', category: 'Top', size: 'S', status: 'published', date: '2026-07-20', yarn: 'Algodon DK', hook: '4.5 mm', level: 'Principiante', price: '3.50', author: 'Crochet para Aprender' },
+  ];
+  saveDesigns();
+}
+
+const stitches = [
+  { sym: '.', name: 'Cadena', desc: 'ch', video: 'Tutorial basico' },
+  { sym: 'X', name: 'Medio punto', desc: 'sc', video: 'Punto mas comun' },
+  { sym: 'T', name: 'Punto alto', desc: 'dc', video: 'Altura media' },
+  { sym: 'V', name: 'Punto alto doble', desc: 'tr', video: 'Mayor altura' },
+  { sym: 'O', name: 'Punto deslizado', desc: 'sl st', video: 'Union invisible' },
+  { sym: '+', name: 'Punto bajo', desc: 'hdc', video: 'Entre medio y alto' },
+  { sym: 'Y', name: 'Vareta', desc: 'hdc', video: 'Similar a hdc' },
+  { sym: 'W', name: 'Abanico', desc: 'fan', video: 'Decorativo' },
+  { sym: 'A', name: 'Disminucion', desc: 'dec', video: 'Para ajustar' },
+  { sym: '<>', name: 'Pina', desc: 'popcorn', video: 'Textura 3D' },
+  { sym: '*', name: 'Punto puff', desc: 'puff', video: 'Voluminoso' },
+  { sym: '-', name: 'Espacio', desc: 'sp', video: 'Hueco decorativo' },
+];
+
+const colors = [
+  { name: 'Terracota', cls: 'accent' },
+  { name: 'Verde', cls: 'success' },
+  { name: 'Violeta', cls: 'dark' },
+  { name: 'Dorado', cls: 'warm' },
+];
+
+const templates = [
+  { name: 'Blusa basica manga corta', category: 'Blusa', icon: 'blusa', popular: true },
+  { name: 'Blusa crop top', category: 'Blusa', icon: 'top', popular: false },
+  { name: 'Vestido playero', category: 'Vestido', icon: 'vestido', popular: true },
+  { name: 'Vestido de noche', category: 'Vestido', icon: 'vestido', popular: false },
+  { name: 'Top halter', category: 'Top', icon: 'top', popular: true },
+  { name: 'Top de hombros caidos', category: 'Top', icon: 'top', popular: false },
+  { name: 'Cardigan largo', category: 'Cardigan', icon: 'cardigan', popular: true },
+  { name: 'Cardigan corto', category: 'Cardigan', icon: 'cardigan', popular: false },
+  { name: 'Sueter cuello alto', category: 'Sueter', icon: 'sueter', popular: false },
+  { name: 'Sueter oversize', category: 'Sueter', icon: 'sueter', popular: true },
+  { name: 'Bolso playero', category: 'Accesorio', icon: 'accesorio', popular: false },
+  { name: 'Gorro slouchy', category: 'Accesorio', icon: 'accesorio', popular: true },
+];
+
+function init() {
+  renderPalette(); renderColorPalette(); renderGrid(); renderSymbols();
+  renderTemplates(); renderDesigns(); calculate(); saveHistory();
+}
+
+function renderPalette() {
+  const p = document.getElementById('stitchPalette');
+  p.innerHTML = stitches.map((s, i) =>
+    '<div class="stitch-opt ' + (i===1?'selected':'') + '" data-stitch="' + s.sym + '" title="' + s.name + '" onclick="selectStitch(this)">' + s.sym + '</div>'
+  ).join('');
+}
+
+function renderColorPalette() {
+  const p = document.getElementById('colorPalette');
+  p.innerHTML = colors.map((c, i) =>
+    '<div class="stitch-opt ' + (i===0?'selected':'') + '" data-color="' + c.cls + '" title="' + c.name + '" onclick="selectColor(this)">' + (i===0?'&#10003;':'') + '</div>'
+  ).join('');
+}
+
+function renderSymbols() {
+  const g = document.getElementById('symbolsGrid');
+  g.innerHTML = stitches.map(s =>
+    '<div class="sym-card"><div class="sym">' + s.sym + '</div><div class="sym-name">' + s.name + '</div><div class="sym-desc">' + s.desc + '</div><div class="sym-video">' + s.video + '</div></div>'
+  ).join('');
+}
+
+function renderTemplates() {
+  const g = document.getElementById('templatesGrid');
+  const icons = {
+    blusa: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 8c0-2 4-4 10-4s10 2 10 4v8c0 2-2 4-4 4h-2v24h-8V20h-2c-2 0-4-2-4-4V8z"/></svg>',
+    vestido: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 4c0-2 5-3 8-3s8 1 8 3v12c0 2-2 3-3 3h-3v30h-8V19h-3c-1 0-3-1-3-3V4z"/></svg>',
+    top: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 4c0-1 3-2 8-2s8 1 8 2v6c0 1-1 2-2 2h-2v6h-8V12h-2c-1 0-2-1-2-2V4z"/></svg>',
+    cardigan: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 8h8v36H6zM34 8h8v36h-8zM14 8h20v36H14zM24 8v36"/></svg>',
+    sueter: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6c0-2 4-3 12-3s12 1 12 3v10c0 2-2 3-3 3h-3v26h-6V19h-6v26h-6V19h-3c-1 0-3-1-3-3V6z"/></svg>',
+    accesorio: '<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="20" r="12"/><path d="M18 30l-6 14M30 30l6 14"/></svg>',
+  };
+  g.innerHTML = templates.map(t =>
+    '<div class="template-card" onclick="loadTemplate(\'' + t.name + '\', \'' + t.category + '\')">' +
+    '<div class="t-preview">' + (icons[t.icon] || icons.blusa) + '</div>' +
+    (t.popular ? '<span class="t-tag tag-popular">Popular</span>' : '') +
+    '<h4>' + t.name + '</h4><p>' + t.category + '</p></div>'
+  ).join('');
+}
+
+function loadTemplate(name, category) {
+  document.getElementById('patternName').value = name;
+  document.getElementById('patternCategory').value = category;
+  showScreen('editor');
+  showToast('Plantilla cargada. Personalizala ahora.');
+}
+
+function renderGrid() {
+  const g = document.getElementById('stitchGrid');
+  g.innerHTML = '';
+  g.style.gridTemplateColumns = 'repeat(' + gridCols + ', 30px)';
+  for (let r = 0; r < gridRows; r++) {
+    for (let c = 0; c < gridCols; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.r = r; cell.dataset.c = c;
+      cell.addEventListener('mousedown', () => { isDrawing = true; paintCell(cell); });
+      cell.addEventListener('mouseenter', () => { if (isDrawing) paintCell(cell); });
+      cell.addEventListener('mouseup', () => isDrawing = false);
+      cell.addEventListener('touchstart', (e) => { e.preventDefault(); paintCell(cell); }, {passive:false});
+      cell.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (el && el.classList.contains('cell')) paintCell(el);
+      }, {passive:false});
+      g.appendChild(cell);
+    }
+  }
+  document.getElementById('gridLabel').textContent = gridCols + ' x ' + gridRows + ' celdas';
+}
+
+document.addEventListener('mouseup', () => isDrawing = false);
+
+function paintCell(cell) {
+  if (currentTool === 'draw') {
+    cell.textContent = currentStitch;
+    let cls = 'cell filled';
+    if (currentColor === 'success') cls += '-alt';
+    else if (currentColor === 'dark') cls += '-dark';
+    else if (currentColor === 'warm') cls += '-warm';
+    cell.className = cls;
+  } else if (currentTool === 'erase') {
+    cell.textContent = ''; cell.className = 'cell';
+  } else if (currentTool === 'fill') {
+    document.querySelectorAll('.cell').forEach(c => {
+      c.textContent = currentStitch;
+      let cls = 'cell filled';
+      if (currentColor === 'success') cls += '-alt';
+      else if (currentColor === 'dark') cls += '-dark';
+      else if (currentColor === 'warm') cls += '-warm';
+      c.className = cls;
+    });
+  }
+}
+
+function saveHistory() {
+  const state = Array.from(document.querySelectorAll('.cell')).map(c => ({t:c.textContent, cls:c.className}));
+  if (history.length > 30) history.shift();
+  history.push(state);
+}
+
+function undo() {
+  if (history.length < 2) return;
+  history.pop();
+  const state = history[history.length-1];
+  document.querySelectorAll('.cell').forEach((c,i) => { c.textContent = state[i].t; c.className = state[i].cls; });
+  showToast('Deshacer');
+}
+
+function resizeGrid(cols, rows) { saveHistory(); gridCols = cols; gridRows = rows; renderGrid(); saveHistory(); }
+function clearGrid() { saveHistory(); document.querySelectorAll('.cell').forEach(c => { c.textContent = ''; c.className = 'cell'; }); saveHistory(); }
+
+function mirrorH() {
+  saveHistory();
+  const cells = Array.from(document.querySelectorAll('.cell'));
+  const grid = [];
+  for (let r = 0; r < gridRows; r++) { grid[r] = []; for (let c = 0; c < gridCols; c++) { const cell = cells[r*gridCols+c]; grid[r][c] = { text: cell.textContent, cls: cell.className }; } }
+  for (let r = 0; r < gridRows; r++) { for (let c = 0; c < gridCols; c++) { const mc = gridCols-1-c; const cell = cells[r*gridCols+c]; const src = grid[r][mc]; cell.textContent = src.text; cell.className = src.cls; } }
+}
+
+function mirrorV() {
+  saveHistory();
+  const cells = Array.from(document.querySelectorAll('.cell'));
+  const grid = [];
+  for (let r = 0; r < gridRows; r++) { grid[r] = []; for (let c = 0; c < gridCols; c++) { const cell = cells[r*gridCols+c]; grid[r][c] = { text: cell.textContent, cls: cell.className }; } }
+  for (let r = 0; r < gridRows; r++) { for (let c = 0; c < gridCols; c++) { const mr = gridRows-1-r; const cell = cells[r*gridCols+c]; const src = grid[mr][c]; cell.textContent = src.text; cell.className = src.cls; } }
+}
+
+function setTool(tool) {
+  currentTool = tool;
+  document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function selectStitch(el) {
+  currentStitch = el.dataset.stitch;
+  document.querySelectorAll('#stitchPalette .stitch-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectColor(el) {
+  currentColor = el.dataset.color;
+  document.querySelectorAll('#colorPalette .stitch-opt').forEach(o => { o.classList.remove('selected'); o.innerHTML = ''; });
+  el.classList.add('selected'); el.innerHTML = '&#10003;';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const idx = ['home','editor','templates','designs','calculator','pricing','symbols'].indexOf(id);
+  if (idx >= 0) document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  if (id === 'designs') renderDesigns();
+  if (id === 'templates') renderTemplates();
+}
+
+function startDesign(type) {
+  document.getElementById('patternName').value = '';
+  document.getElementById('patternCategory').value = type.charAt(0).toUpperCase() + type.slice(1);
+  showScreen('editor');
+}
+
+function saveDesigns() { localStorage.setItem('crochet_designs', JSON.stringify(designs)); }
+
+function renderDesigns() {
+  const c = document.getElementById('designsGrid');
+  if (!designs.length) { c.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column:1/-1;">Aun no tienes disenos guardados.</p>'; return; }
+  c.innerHTML = designs.map((d, i) =>
+    '<div class="design-card">' +
+    '<div class="d-preview">' +
+    '<div class="mini-grid">' + Array(64).fill(0).map((_,j) => '<div class="mini-cell ' + (Math.random()>0.65?'on':'') + '"></div>').join('') + '</div>' +
+    '<span class="d-status status-' + d.status + '">' + (d.status==='published'?'Publicado':'Borrador') + '</span>' +
+    '</div>' +
+    '<div class="d-info">' +
+    '<h4>' + d.name + '</h4>' +
+    '<p>' + d.category + ' - Talla ' + d.size + ' - ' + d.date + (d.yarn?' - ' + d.yarn:'') + '</p>' +
+    '<div class="d-tags"><span class="tag">' + d.level + '</span><span class="tag">' + d.hook + '</span>' + (d.price?'<span class="tag">' + d.price + ' EUR</span>':'') + '</div>' +
+    '</div>' +
+    '<div class="d-actions">' +
+    '<button onclick="editDesign(' + i + ')">Editar</button>' +
+    '<button class="primary" onclick="exportDesign(' + i + ')">Exportar</button>' +
+    '</div></div>'
+  ).join('');
+}
+
+function savePattern() {
+  const name = document.getElementById('patternName').value.trim() || 'Sin nombre';
+  const d = {
+    name, category: document.getElementById('patternCategory').value,
+    size: document.getElementById('patternSize').value,
+    yarn: document.getElementById('patternYarn').value,
+    hook: document.getElementById('patternHook').value,
+    level: document.getElementById('patternLevel').value,
+    price: document.getElementById('patternPrice').value,
+    author: document.getElementById('patternAuthor').value,
+    notes: document.getElementById('patternNotes').value,
+    status: 'draft', date: new Date().toISOString().slice(0,10)
+  };
+  designs.unshift(d); saveDesigns();
+  showToast('Patron guardado');
+}
+
+function editDesign(i) {
+  const d = designs[i];
+  document.getElementById('patternName').value = d.name;
+  document.getElementById('patternCategory').value = d.category;
+  document.getElementById('patternSize').value = d.size;
+  document.getElementById('patternYarn').value = d.yarn || '';
+  document.getElementById('patternHook').value = d.hook || '';
+  document.getElementById('patternLevel').value = d.level || 'Intermedio';
+  document.getElementById('patternPrice').value = d.price || '';
+  document.getElementById('patternAuthor').value = d.author || '';
+  document.getElementById('patternNotes').value = d.notes || '';
+  showScreen('editor');
+}
+
+function exportDesign(i) {
+  const d = designs[i];
+  document.getElementById('modalTitle').textContent = 'Exportar: ' + d.name;
+  document.getElementById('modalText').textContent = 'Elige el formato. Todo queda en tu dispositivo.';
+  document.getElementById('modalBody').innerHTML =
+    '<div class="export-options">' +
+    '<div class="export-option" onclick="doExport(\'txt\', ' + i + ')">' +
+    '<input type="radio" name="ex" id="ex1"><label for="ex1">Texto plano editable</label><small>Para Word o Google Docs</small></div>' +
+    '<div class="export-option" onclick="doExport(\'pdf\', ' + i + ')">' +
+    '<input type="radio" name="ex" id="ex2"><label for="ex2">PDF con diagrama</label><small>Usa Imprimir -> Guardar como PDF</small></div>' +
+    '</div>';
+  document.getElementById('modalConfirm').onclick = () => closeModal();
+  document.getElementById('modalBg').classList.add('active');
+}
+
+function doExport(type, i) {
+  const d = designs[i];
+  if (type === 'txt') {
+    const content = 'PATRON: ' + d.name + '\n' +
+      'Categoria: ' + d.category + '\n' +
+      'Talla: ' + d.size + '\n' +
+      'Hilo: ' + (d.yarn || 'No especificado') + '\n' +
+      'Gancho: ' + (d.hook || 'No especificado') + '\n' +
+      'Dificultad: ' + (d.level || 'No especificada') + '\n' +
+      'Precio sugerido: ' + (d.price || 'No especificado') + ' EUR\n' +
+      'Autor: ' + (d.author || 'No especificado') + '\n' +
+      'Fecha: ' + d.date + '\n\n' +
+      'INSTRUCCIONES:\n' + (d.notes || 'Sin instrucciones adicionales.') + '\n\n' +
+      '---\nGenerado con CrochetStudio Pro\nCopyright ' + new Date().getFullYear() + ' ' + (d.author || '') + '\nTodos los derechos reservados.\n';
+    const blob = new Blob([content], {type: 'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = d.name.replace(/\s+/g,'_') + '.txt';
+    a.click();
+    showToast('Archivo descargado');
+  } else {
+    window.print();
+    showToast('Usa "Guardar como PDF" en la impresion');
+  }
+}
+
+function showExportModal() {
+  document.getElementById('modalTitle').textContent = 'Exportar patron';
+  document.getElementById('modalText').textContent = 'Genera un archivo profesional con tu marca personal.';
+  document.getElementById('modalBody').innerHTML =
+    '<div class="export-options">' +
+    '<div class="export-option"><input type="radio" name="ex" id="ex1" checked><label for="ex1">PDF con diagrama e instrucciones</label><small>Ideal para comercializar</small></div>' +
+    '<div class="export-option"><input type="radio" name="ex" id="ex2"><label for="ex2">Texto plano editable</label><small>Para Word o Google Docs</small></div>' +
+    '</div>';
+  document.getElementById('modalConfirm').onclick = () => { window.print(); closeModal(); showToast('Usa "Guardar como PDF"'); };
+  document.getElementById('modalBg').classList.add('active');
+}
+
+function generateInstructions() {
+  saveHistory();
+  const cells = Array.from(document.querySelectorAll('.cell'));
+  let text = '';
+  for (let r = 0; r < gridRows; r++) {
+    let rowText = 'Vuelta ' + (r+1) + ': ';
+    let count = 0, last = '';
+    for (let c = 0; c < gridCols; c++) {
+      const sym = cells[r * gridCols + c].textContent || '-';
+      if (sym === last) { count++; }
+      else { if (last) rowText += (count > 1 ? '' + count : '') + last + ' '; last = sym; count = 1; }
+    }
+    if (last) rowText += (count > 1 ? '' + count : '') + last;
+    text += rowText + '\n';
+  }
+  document.getElementById('instructionsText').textContent = text;
+  document.getElementById('instructionsPanel').style.display = 'block';
+  showToast('Instrucciones generadas');
+}
+
+const sizeData = {
+  xs: { busto: 82, cintura: 64, cadera: 88, largo: 52, manga: 52 },
+  s: { busto: 88, cintura: 70, cadera: 94, largo: 55, manga: 54 },
+  m: { busto: 92, cintura: 76, cadera: 96, largo: 58, manga: 56 },
+  l: { busto: 98, cintura: 82, cadera: 102, largo: 61, manga: 58 },
+  xl: { busto: 104, cintura: 88, cadera: 108, largo: 64, manga: 60 },
+  xxl: { busto: 110, cintura: 94, cadera: 114, largo: 67, manga: 62 },
+};
+
+function calculate() {
+  const size = document.getElementById('calcSize').value;
+  const type = document.getElementById('calcType').value;
+  const gauge = parseFloat(document.getElementById('calcGauge').value) || 18;
+  const rowGauge = parseFloat(document.getElementById('calcRows').value) || 24;
+  const width = parseFloat(document.getElementById('calcWidth').value) || 50;
+  const height = parseFloat(document.getElementById('calcHeight').value) || 60;
+  const s = sizeData[size];
+  const mult = type === 'vestido' ? 1.7 : type === 'top' ? 0.65 : type === 'cardigan' ? 1.1 : type === 'sueter' ? 1.05 : 1;
+  const pts = Math.round((width / 10) * gauge);
+  const vlt = Math.round((height / 10) * rowGauge);
+  const ptsBusto = Math.round((s.busto / 10) * gauge);
+  const vltLargo = Math.round((s.largo * mult / 10) * rowGauge);
+  document.getElementById('calcResult').innerHTML =
+    '<h3>Resultados para talla ' + size.toUpperCase() + ' - ' + type.charAt(0).toUpperCase() + type.slice(1) + '</h3>' +
+    '<div class="res-item"><span>Busto estandar</span><span class="val">' + s.busto + ' cm</span></div>' +
+    '<div class="res-item"><span>Cintura estandar</span><span class="val">' + s.cintura + ' cm</span></div>' +
+    '<div class="res-item"><span>Cadera estandar</span><span class="val">' + s.cadera + ' cm</span></div>' +
+    '<div class="res-item"><span>Largo sugerido</span><span class="val">' + Math.round(s.largo * mult) + ' cm</span></div>' +
+    '<div class="res-item"><span>Manga sugerida</span><span class="val">' + s.manga + ' cm</span></div>' +
+    '<div style="border-top:2px solid var(--border); margin:10px 0;"></div>' +
+    '<div class="res-item"><span>Puntos para ancho (' + width + 'cm)</span><span class="val">' + pts + ' pts</span></div>' +
+    '<div class="res-item"><span>Vueltas para largo (' + height + 'cm)</span><span class="val">' + vlt + ' v</span></div>' +
+    '<div class="res-item"><span>Puntos para contorno busto</span><span class="val">' + ptsBusto + ' pts</span></div>' +
+    '<div class="res-item"><span>Vueltas para largo estandar</span><span class="val">' + vltLargo + ' v</span></div>' +
+    '<div class="calc-tip">Consejo: Teje una muestra de 10x10 cm y ajusta segun tu tension real.</div>';
+}
+
+function closeModal() { document.getElementById('modalBg').classList.remove('active'); }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+init();
+</script>
+</body>
+</html>
