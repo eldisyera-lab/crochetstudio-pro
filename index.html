@@ -436,6 +436,7 @@
   }
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="app">
@@ -1582,15 +1583,19 @@ function toggleMusic() {
 function startMusic() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
-  const scale = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+  // Escala pentatónica mayor de Do (más armónica y relajante)
+  const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
   function playNote(freq, time, duration, vol) {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    osc.type = 'sine';
+    // 'triangle' suena más cálido y presente que 'sine'
+    osc.type = 'triangle';
     osc.frequency.value = freq;
+    // Volumen audible: 0.12 - 0.22
     gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(vol, time + 0.5);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+    gain.gain.linearRampToValueAtTime(vol, time + 0.06);   // ataque rápido
+    gain.gain.setValueAtTime(vol, time + duration * 0.55);   // sostenido
+    gain.gain.exponentialRampToValueAtTime(0.001, time + duration); // release
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start(time);
@@ -1600,17 +1605,20 @@ function startMusic() {
   function schedule() {
     if (!musicPlaying) return;
     const now = audioCtx.currentTime;
-    for (let i = 0; i < 8; i++) {
+    // 14 notas en ~9 segundos = más densidad musical
+    for (let i = 0; i < 14; i++) {
       const note = scale[Math.floor(Math.random() * scale.length)];
-      const time = now + i * 2 + Math.random();
-      const dur = 3 + Math.random() * 2;
-      const vol = 0.03 + Math.random() * 0.02;
+      const time = now + i * 0.7 + Math.random() * 0.3;
+      const dur = 2.2 + Math.random() * 1.8;
+      const vol = 0.12 + Math.random() * 0.10; // 0.12 - 0.22
       playNote(note, time, dur, vol);
-      if (Math.random() > 0.5) {
-        playNote(note * 1.5, time + 0.5, dur * 0.8, vol * 0.5);
+      // Armonía: quinta perfecta o tercera mayor
+      if (Math.random() > 0.4) {
+        const harmony = Math.random() > 0.5 ? note * 1.5 : note * 1.25;
+        playNote(harmony, time + 0.12, dur * 0.65, vol * 0.40);
       }
     }
-    setTimeout(schedule, 16000);
+    setTimeout(schedule, 10000);
   }
   schedule();
 }
