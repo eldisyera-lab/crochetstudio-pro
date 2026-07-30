@@ -377,13 +377,22 @@
   .checklist-item {
     display: flex; align-items: center; gap: 12px; padding: 14px;
     background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
-    margin-bottom: 10px; cursor: pointer; transition: all 0.2s;
+    margin-bottom: 10px; cursor: pointer; transition: all 0.2s; user-select: none;
   }
   .checklist-item:hover { border-color: var(--accent); }
-  .checklist-item input { width: 20px; height: 20px; accent-color: var(--accent); flex-shrink: 0; pointer-events: none; }
-  .checklist-item label { font-size: 14px; cursor: pointer; flex: 1; }
+  .checklist-item .check-box {
+    width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; background: var(--bg-card);
+  }
+  .checklist-item .check-box::after {
+    content: '✓'; font-size: 14px; font-weight: bold; color: #fff; opacity: 0; transition: opacity 0.2s;
+  }
+  .checklist-item.checked .check-box { background: var(--success); border-color: var(--success); }
+  .checklist-item.checked .check-box::after { opacity: 1; }
+  .checklist-item span { font-size: 14px; flex: 1; }
   .checklist-item.checked { background: #f0f9f4; border-color: var(--success); }
-  .checklist-item.checked label { text-decoration: line-through; color: var(--text-muted); }
+  .checklist-item.checked span { text-decoration: line-through; color: var(--text-muted); }
 
   .stitch-count-panel {
     margin-top: 12px; padding: 12px; background: var(--bg-raised); border-radius: var(--radius-sm);
@@ -833,16 +842,16 @@
     <h2 style="font-size:20px; margin-bottom:8px;">Checklist antes de publicar</h2>
     <p style="color:var(--text-secondary); margin-bottom:16px;">Asegurate de no olvidar nada antes de subir tu patron a la venta.</p>
     <div id="checklistContainer">
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c1"><label for="c1">Teji una muestra de 10x10 cm y verifique mis puntos/vueltas</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c2"><label for="c2">Calcule los materiales necesarios (ovillos, metros)</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c3"><label for="c3">Genere las instrucciones paso a paso y las revise</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c4"><label for="c4">Verifique que cada vuelta tenga el numero correcto de puntos</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c5"><label for="c5">Saque foto del producto terminado con buena luz</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c6"><label for="c6">Defini el precio segun la guia de precios sugeridos</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c7"><label for="c7">Agregue mi marca de agua / nombre de autor</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c8"><label for="c8">Especifico el tipo de hilo, gancho y nivel de dificultad</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c9"><label for="c9">Inclui todas las tallas que quiero vender</label></div>
-      <div class="checklist-item" onclick="toggleCheck(this)"><input type="checkbox" id="c10"><label for="c10">Exporte el patron en PDF y guarde una copia de respaldo</label></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Tejí una muestra de 10x10 cm y verifiqué mis puntos/vueltas</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Calcule los materiales necesarios (ovillos, metros)</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Generé las instrucciones paso a paso y las revisé</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Verifiqué que cada vuelta tenga el número correcto de puntos</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Saqué foto del producto terminado con buena luz</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Definí el precio según la guía de precios sugeridos</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Agrégué mi marca de agua / nombre de autor</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Especifico el tipo de hilo, gancho y nivel de dificultad</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Incluí todas las tallas que quiero vender</span></div>
+      <div class="checklist-item" onclick="toggleCheck(this)"><div class="check-box"></div><span>Exporté el patrón en PDF y guardé una copia de respaldo</span></div>
     </div>
     <div class="calc-tip" style="margin-top:16px;">Consejo: No publiques un patron que no hayas tejido tu misma al menos una vez. La experiencia real te permite detectar errores que el grid no muestra.</div>
   </div>
@@ -1557,9 +1566,7 @@ function showToast(msg) {
 }
 
 function toggleCheck(el) {
-  const cb = el.querySelector('input');
-  cb.checked = !cb.checked;
-  el.classList.toggle('checked', cb.checked);
+  el.classList.toggle('checked');
 }
 
 /* MUSIC - Web Audio API Ambient */
