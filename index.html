@@ -1562,6 +1562,17 @@ function toggleCheck(el) {
   el.classList.toggle('checked', cb.checked);
 }
 
+// Prevenir que el checkbox nativo interfiera con el onclick del div
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.checklist-item input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleCheck(cb.closest('.checklist-item'));
+    });
+  });
+});
+
 /* MUSIC - Web Audio API Ambient */
 function toggleMusic() {
   const btn = document.getElementById('musicToggle');
