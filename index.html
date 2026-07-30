@@ -1562,7 +1562,7 @@ function toggleCheck(el) {
   el.classList.toggle('checked', cb.checked);
 }
 
-/* MUSIC - Web Audio API v3 - Ultra Audible */
+/* MUSIC - Web Audio API Ambient v4 - Realmente relajante */
 let audioCtx = null, masterGain = null, musicTimer = null;
 
 function toggleMusic() {
@@ -1578,97 +1578,96 @@ function toggleMusic() {
     return;
   }
 
-  // Crear AudioContext fresco en cada inicio (evita problemas de suspend)
   if (!audioCtx || audioCtx.state === 'closed') {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
 
-  // Master gain con volumen ALTO
   if (!masterGain) {
     masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.85;
+    masterGain.gain.value = 0.25;
     masterGain.connect(audioCtx.destination);
   }
 
-  // Resume y luego iniciar
   const startPlayback = function() {
-    console.log('AudioContext state:', audioCtx.state);
-    console.log('Master gain value:', masterGain.gain.value);
+    // Patrón tipo "canción de cuna" - escala pentatónica mayor de Do
+    // Notas: Do, Re, Mi, Sol, La, Do (muy armónicas, nunca disonantes)
+    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+    // Secuencia tipo arpegio descendente suave
+    const pattern = [5, 3, 1, 0, 2, 4, 2, 0, 3, 5, 4, 2];
+    let noteIdx = 0;
 
-    // BEEP DE PRUEBA INMEDIATO (imposible de no escuchar)
-    const testOsc = audioCtx.createOscillator();
-    const testGain = audioCtx.createGain();
-    testOsc.type = 'triangle';
-    testOsc.frequency.value = 523.25; // Do5
-    testGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    testGain.gain.linearRampToValueAtTime(0.6, audioCtx.currentTime + 0.05);
-    testGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-    testOsc.connect(testGain);
-    testGain.connect(masterGain);
-    testOsc.start(audioCtx.currentTime);
-    testOsc.stop(audioCtx.currentTime + 0.4);
+    function playGentleNote() {
+      if (!musicPlaying || !audioCtx) return;
 
-    // Iniciar patrón musical después del beep
-    setTimeout(playAmbientPattern, 500);
+      const now = audioCtx.currentTime;
+      const note = scale[pattern[noteIdx % pattern.length]];
+      noteIdx++;
+
+      // Onda senoidal pura = sonido suave tipo flauta/campana
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = note;
+
+      // Envelope muy suave: ataque lento, sustain largo, release lento
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.35, now + 0.3);   // Attack suave 0.3s
+      gain.gain.setValueAtTime(0.35, now + 2.0);            // Sustain 2s
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.5); // Release lento 1.5s
+
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.start(now);
+      osc.stop(now + 3.5);
+      musicNodes.push({osc, gain});
+
+      // Armonía: quinta perfecta muy suave (aporta calidez sin ser invasiva)
+      const osc2 = audioCtx.createOscillator();
+      const gain2 = audioCtx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.value = note * 1.5; // Quinta perfecta
+      gain2.gain.setValueAtTime(0, now + 0.2);
+      gain2.gain.linearRampToValueAtTime(0.08, now + 0.5); // Muy suave
+      gain2.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
+      osc2.connect(gain2);
+      gain2.connect(masterGain);
+      osc2.start(now + 0.2);
+      osc2.stop(now + 3.0);
+      musicNodes.push({osc: osc2, gain: gain2});
+
+      // Octava baja como "drone" de fondo (muy sutil)
+      if (noteIdx % 4 === 0) {
+        const osc3 = audioCtx.createOscillator();
+        const gain3 = audioCtx.createGain();
+        osc3.type = 'sine';
+        osc3.frequency.value = note * 0.5; // Una octava abajo
+        gain3.gain.setValueAtTime(0, now);
+        gain3.gain.linearRampToValueAtTime(0.06, now + 0.8);
+        gain3.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
+        osc3.connect(gain3);
+        gain3.connect(masterGain);
+        osc3.start(now);
+        osc3.stop(now + 4.0);
+        musicNodes.push({osc: osc3, gain: gain3});
+      }
+
+      // Siguiente nota cada 2.5 segundos (muy espaciado, relajante)
+      musicTimer = setTimeout(playGentleNote, 2500);
+    }
+
+    playGentleNote();
 
     musicPlaying = true;
     btn.classList.add('playing');
     icon.textContent = '♪';
-    showToast('Música activada - volumen alto');
+    showToast('Música relajante activada');
   };
 
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume().then(startPlayback).catch(function(e) {
-      console.error('Resume failed:', e);
-      startPlayback();
-    });
+    audioCtx.resume().then(startPlayback).catch(startPlayback);
   } else {
     startPlayback();
   }
-}
-
-function playAmbientPattern() {
-  if (!musicPlaying || !audioCtx) return;
-
-  const now = audioCtx.currentTime;
-  // Escala pentatónica mayor (Do, Re, Mi, Sol, La, Do)
-  const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-  // Patrón tipo "canción de cuna" simple
-  const pattern = [0, 2, 4, 2, 0, 3, 5, 3, 1, 4, 2, 0];
-  const idx = Math.floor(Date.now() / 1200) % pattern.length;
-  const note = scale[pattern[idx]];
-
-  // Nota principal - VOLUMEN ALTO
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = 'triangle'; // Más armónicos = más audible
-  osc.frequency.value = note;
-  gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.50, now + 0.06); // Attack rápido
-  gain.gain.setValueAtTime(0.50, now + 0.8); // Sustain
-  gain.gain.exponentialRampToValueAtTime(0.001, now + 1.6); // Release
-  osc.connect(gain);
-  gain.connect(masterGain);
-  osc.start(now);
-  osc.stop(now + 1.6);
-  musicNodes.push({osc, gain});
-
-  // Quinta perfecta como acompañamiento (más suave)
-  const osc2 = audioCtx.createOscillator();
-  const gain2 = audioCtx.createGain();
-  osc2.type = 'sine';
-  osc2.frequency.value = note * 1.5;
-  gain2.gain.setValueAtTime(0, now + 0.1);
-  gain2.gain.linearRampToValueAtTime(0.20, now + 0.2);
-  gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.4);
-  osc2.connect(gain2);
-  gain2.connect(masterGain);
-  osc2.start(now + 0.1);
-  osc2.stop(now + 1.4);
-  musicNodes.push({osc: osc2, gain: gain2});
-
-  // Programar siguiente nota
-  musicTimer = setTimeout(playAmbientPattern, 1200);
 }
 
 function stopMusic() {
@@ -1681,7 +1680,6 @@ function stopMusic() {
     });
     musicNodes = [];
   }
-  // NO cerrar el audioCtx, solo detener las notas
 }
 
 if ('serviceWorker' in navigator) {
@@ -1691,4 +1689,4 @@ if ('serviceWorker' in navigator) {
 init();
 </script>
 </body>
-</html>
+</html
