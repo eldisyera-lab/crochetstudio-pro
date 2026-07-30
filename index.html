@@ -437,6 +437,7 @@
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="app">
@@ -1561,7 +1562,9 @@ function toggleCheck(el) {
   el.classList.toggle('checked', cb.checked);
 }
 
-/* MUSIC - Web Audio API Ambient */
+/* MUSIC - Web Audio API Ambient v2 */
+let masterGain = null, musicInterval = null, musicNoteIndex = 0;
+
 function toggleMusic() {
   const btn = document.getElementById('musicToggle');
   const icon = document.getElementById('musicIcon');
@@ -1569,59 +1572,60 @@ function toggleMusic() {
     stopMusic();
     musicPlaying = false;
     btn.classList.remove('playing');
-    icon.textContent = '\u266B';
-    showToast('Musica pausada');
+    icon.textContent = '♫';
+    showToast('Música pausada');
   } else {
     startMusic();
     musicPlaying = true;
     btn.classList.add('playing');
-    icon.textContent = '\u266A';
-    showToast('Musica ambiental activada');
+    icon.textContent = '♪';
+    showToast('Música ambiental activada');
   }
 }
 
 function startMusic() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.45;
+    masterGain.connect(audioCtx.destination);
+  }
 
   function begin() {
-    // Escala pentatónica mayor de Do (más armónica y relajante)
-    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
-    function playNote(freq, time, duration, vol) {
+    // Escala pentatónica mayor de Do (relajante y armónica)
+    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+    const pattern = [0, 2, 4, 2, 0, 3, 5, 3, 1, 4, 2, 5, 0, 4];
+
+    function playTone(freq, time, duration, volume) {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
-      // 'triangle' suena más cálido y presente que 'sine'
-      osc.type = 'triangle';
+      osc.type = 'sine';
       osc.frequency.value = freq;
-      // Volumen audible: 0.12 - 0.22
       gain.gain.setValueAtTime(0, time);
-      gain.gain.linearRampToValueAtTime(vol, time + 0.06);   // ataque rápido
-      gain.gain.setValueAtTime(vol, time + duration * 0.55);   // sostenido
-      gain.gain.exponentialRampToValueAtTime(0.001, time + duration); // release
+      gain.gain.linearRampToValueAtTime(volume, time + 0.08);
+      gain.gain.setValueAtTime(volume, time + duration - 0.2);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
       osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      gain.connect(masterGain);
       osc.start(time);
       osc.stop(time + duration);
-      musicNodes.push({osc: osc, gain: gain});
+      musicNodes.push({osc, gain});
     }
-    function schedule() {
+
+    function playNextNote() {
       if (!musicPlaying) return;
       const now = audioCtx.currentTime;
-      // 14 notas en ~9 segundos = más densidad musical
-      for (let i = 0; i < 14; i++) {
-        const note = scale[Math.floor(Math.random() * scale.length)];
-        const time = now + i * 0.7 + Math.random() * 0.3;
-        const dur = 2.2 + Math.random() * 1.8;
-        const vol = 0.12 + Math.random() * 0.10; // 0.12 - 0.22
-        playNote(note, time, dur, vol);
-        // Armonía: quinta perfecta o tercera mayor
-        if (Math.random() > 0.4) {
-          const harmony = Math.random() > 0.5 ? note * 1.5 : note * 1.25;
-          playNote(harmony, time + 0.12, dur * 0.65, vol * 0.40);
-        }
-      }
-      setTimeout(schedule, 10000);
+      const note = scale[pattern[musicNoteIndex % pattern.length]];
+      const dur = 1.4 + Math.random() * 0.4;
+      const vol = 0.30 + Math.random() * 0.15;
+      playTone(note, now, dur, vol);
+      playTone(note * 1.5, now + 0.06, dur * 0.7, vol * 0.25);
+      playTone(note * 2, now + 0.12, dur * 0.5, vol * 0.12);
+      musicNoteIndex++;
+      musicInterval = setTimeout(playNextNote, 1100 + Math.random() * 300);
     }
-    schedule();
+
+    playNextNote();
   }
 
   if (audioCtx.state === 'suspended') {
@@ -1632,10 +1636,11 @@ function startMusic() {
 }
 
 function stopMusic() {
+  if (musicInterval) { clearTimeout(musicInterval); musicInterval = null; }
   musicNodes.forEach(n => {
-    try { if (n.osc) n.osc.stop(); } catch(e){}
-    try { if (n.gain) n.gain.disconnect(); } catch(e){}
-    try { if (n.osc) n.osc.disconnect(); } catch(e){}
+    try { n.osc.stop(); } catch(e){}
+    try { n.gain.disconnect(); } catch(e){}
+    try { n.osc.disconnect(); } catch(e){}
   });
   musicNodes = [];
 }
