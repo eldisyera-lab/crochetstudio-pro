@@ -1212,7 +1212,7 @@ function renderMiniGrid(gridState, container) {
 
 function renderDesigns() {
   const c = document.getElementById('designsGrid');
-  if (!designs.length) { c.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column:1/-1;">Aun no tienes diseños guardados.</p>'; return; }
+  if (!designs.length) { c.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column:1/-1;">Aun no tienes disenos guardados.</p>'; return; }
   c.innerHTML = designs.map((d, i) => {
     const gridId = 'miniGrid_' + i;
     return '<div class="design-card">' +
@@ -1563,7 +1563,7 @@ function toggleCheck(el) {
 }
 
 /* MUSIC - Web Audio API Ambient v4 - Realmente relajante */
-let audioCtx = null, masterGain = null, musicTimer = null;
+let masterGain = null, musicTimer = null;
 
 function toggleMusic() {
   const btn = document.getElementById('musicToggle');
@@ -1589,10 +1589,9 @@ function toggleMusic() {
   }
 
   const startPlayback = function() {
-    // Patrón tipo "canción de cuna" - escala pentatónica mayor de Do
-    // Notas: Do, Re, Mi, Sol, La, Do (muy armónicas, nunca disonantes)
+    // Escala pentatónica mayor de Do - notas muy armónicas
     const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-    // Secuencia tipo arpegio descendente suave
+    // Secuencia tipo arpegio suave
     const pattern = [5, 3, 1, 0, 2, 4, 2, 0, 3, 5, 4, 2];
     let noteIdx = 0;
 
@@ -1609,25 +1608,25 @@ function toggleMusic() {
       osc.type = 'sine';
       osc.frequency.value = note;
 
-      // Envelope muy suave: ataque lento, sustain largo, release lento
+      // Envelope muy suave
       gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.35, now + 0.3);   // Attack suave 0.3s
-      gain.gain.setValueAtTime(0.35, now + 2.0);            // Sustain 2s
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.5); // Release lento 1.5s
+      gain.gain.linearRampToValueAtTime(0.35, now + 0.3);
+      gain.gain.setValueAtTime(0.35, now + 2.0);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
 
       osc.connect(gain);
       gain.connect(masterGain);
       osc.start(now);
       osc.stop(now + 3.5);
-      musicNodes.push({osc, gain});
+      musicNodes.push({osc: osc, gain: gain});
 
-      // Armonía: quinta perfecta muy suave (aporta calidez sin ser invasiva)
+      // Quinta perfecta muy suave
       const osc2 = audioCtx.createOscillator();
       const gain2 = audioCtx.createGain();
       osc2.type = 'sine';
-      osc2.frequency.value = note * 1.5; // Quinta perfecta
+      osc2.frequency.value = note * 1.5;
       gain2.gain.setValueAtTime(0, now + 0.2);
-      gain2.gain.linearRampToValueAtTime(0.08, now + 0.5); // Muy suave
+      gain2.gain.linearRampToValueAtTime(0.08, now + 0.5);
       gain2.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
       osc2.connect(gain2);
       gain2.connect(masterGain);
@@ -1635,12 +1634,12 @@ function toggleMusic() {
       osc2.stop(now + 3.0);
       musicNodes.push({osc: osc2, gain: gain2});
 
-      // Octava baja como "drone" de fondo (muy sutil)
+      // Octava baja como drone sutil
       if (noteIdx % 4 === 0) {
         const osc3 = audioCtx.createOscillator();
         const gain3 = audioCtx.createGain();
         osc3.type = 'sine';
-        osc3.frequency.value = note * 0.5; // Una octava abajo
+        osc3.frequency.value = note * 0.5;
         gain3.gain.setValueAtTime(0, now);
         gain3.gain.linearRampToValueAtTime(0.06, now + 0.8);
         gain3.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
@@ -1651,7 +1650,6 @@ function toggleMusic() {
         musicNodes.push({osc: osc3, gain: gain3});
       }
 
-      // Siguiente nota cada 2.5 segundos (muy espaciado, relajante)
       musicTimer = setTimeout(playGentleNote, 2500);
     }
 
@@ -1674,9 +1672,9 @@ function stopMusic() {
   if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
   if (musicNodes) {
     musicNodes.forEach(function(n) {
-      try { n.osc.stop(); } catch(e){}
-      try { n.gain.disconnect(); } catch(e){}
-      try { n.osc.disconnect(); } catch(e){}
+      try { if (n.osc) n.osc.stop(); } catch(e){}
+      try { if (n.gain) n.gain.disconnect(); } catch(e){}
+      try { if (n.osc) n.osc.disconnect(); } catch(e){}
     });
     musicNodes = [];
   }
@@ -1689,4 +1687,4 @@ if ('serviceWorker' in navigator) {
 init();
 </script>
 </body>
-</html
+</html>
