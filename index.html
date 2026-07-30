@@ -1562,122 +1562,81 @@ function toggleCheck(el) {
   el.classList.toggle('checked', cb.checked);
 }
 
-/* MUSIC - Web Audio API Ambient v4 - Realmente relajante */
-let masterGain = null, musicTimer = null;
-
+/* MUSIC - Web Audio API Ambient */
 function toggleMusic() {
   const btn = document.getElementById('musicToggle');
   const icon = document.getElementById('musicIcon');
-
   if (musicPlaying) {
     stopMusic();
     musicPlaying = false;
     btn.classList.remove('playing');
-    icon.textContent = '♫';
-    showToast('Música pausada');
-    return;
-  }
-
-  if (!audioCtx || audioCtx.state === 'closed') {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-
-  if (!masterGain) {
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.25;
-    masterGain.connect(audioCtx.destination);
-  }
-
-  const startPlayback = function() {
-    // Escala pentatónica mayor de Do - notas muy armónicas
-    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
-    // Secuencia tipo arpegio suave
-    const pattern = [5, 3, 1, 0, 2, 4, 2, 0, 3, 5, 4, 2];
-    let noteIdx = 0;
-
-    function playGentleNote() {
-      if (!musicPlaying || !audioCtx) return;
-
-      const now = audioCtx.currentTime;
-      const note = scale[pattern[noteIdx % pattern.length]];
-      noteIdx++;
-
-      // Onda senoidal pura = sonido suave tipo flauta/campana
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.value = note;
-
-      // Envelope muy suave
-      gain.gain.setValueAtTime(0, now);
-      gain.gain.linearRampToValueAtTime(0.35, now + 0.3);
-      gain.gain.setValueAtTime(0.35, now + 2.0);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
-
-      osc.connect(gain);
-      gain.connect(masterGain);
-      osc.start(now);
-      osc.stop(now + 3.5);
-      musicNodes.push({osc: osc, gain: gain});
-
-      // Quinta perfecta muy suave
-      const osc2 = audioCtx.createOscillator();
-      const gain2 = audioCtx.createGain();
-      osc2.type = 'sine';
-      osc2.frequency.value = note * 1.5;
-      gain2.gain.setValueAtTime(0, now + 0.2);
-      gain2.gain.linearRampToValueAtTime(0.08, now + 0.5);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 3.0);
-      osc2.connect(gain2);
-      gain2.connect(masterGain);
-      osc2.start(now + 0.2);
-      osc2.stop(now + 3.0);
-      musicNodes.push({osc: osc2, gain: gain2});
-
-      // Octava baja como drone sutil
-      if (noteIdx % 4 === 0) {
-        const osc3 = audioCtx.createOscillator();
-        const gain3 = audioCtx.createGain();
-        osc3.type = 'sine';
-        osc3.frequency.value = note * 0.5;
-        gain3.gain.setValueAtTime(0, now);
-        gain3.gain.linearRampToValueAtTime(0.06, now + 0.8);
-        gain3.gain.exponentialRampToValueAtTime(0.001, now + 4.0);
-        osc3.connect(gain3);
-        gain3.connect(masterGain);
-        osc3.start(now);
-        osc3.stop(now + 4.0);
-        musicNodes.push({osc: osc3, gain: gain3});
-      }
-
-      musicTimer = setTimeout(playGentleNote, 2500);
-    }
-
-    playGentleNote();
-
+    icon.textContent = '\u266B';
+    showToast('Musica pausada');
+  } else {
+    startMusic();
     musicPlaying = true;
     btn.classList.add('playing');
-    icon.textContent = '♪';
-    showToast('Música relajante activada');
-  };
+    icon.textContent = '\u266A';
+    showToast('Musica ambiental activada');
+  }
+}
 
+function startMusic() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  // Escala pentatónica mayor de Do (más armónica y relajante)
+  const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+  function playNote(freq, time, duration, vol) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    // 'triangle' suena más cálido y presente que 'sine'
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    // Volumen audible: 0.12 - 0.22
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(vol, time + 0.06);   // ataque rápido
+    gain.gain.setValueAtTime(vol, time + duration * 0.55);   // sostenido
+    gain.gain.exponentialRampToValueAtTime(0.001, time + duration); // release
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(time);
+    osc.stop(time + duration);
+    musicNodes.push(osc, gain);
+  }
+  function schedule() {
+    if (!musicPlaying) return;
+    const now = audioCtx.currentTime;
+    // 14 notas en ~9 segundos = más densidad musical
+    for (let i = 0; i < 6; i++) {
+      const note = scale[Math.floor(Math.random() * scale.length)];
+      const time = now + i * 0.7 + Math.random() * 0.3;
+      const dur = 2.2 + Math.random() * 1.8;
+      const vol = 0.40 + Math.random() * 0.20; // 0.40 - 0.60 (audible)
+      playNote(note, time, dur, vol);
+      // Armonía: quinta perfecta o tercera mayor
+      if (Math.random() > 0.4) {
+        const harmony = Math.random() > 0.5 ? note * 1.5 : note * 1.25;
+        playNote(harmony, time + 0.12, dur * 0.65, vol * 0.40);
+      }
+    }
+    setTimeout(schedule, 8000);
+  }
   if (audioCtx.state === 'suspended') {
-    audioCtx.resume().then(startPlayback).catch(startPlayback);
+    audioCtx.resume().then(function() {
+      console.log('AudioContext resumed, starting music');
+      schedule();
+    }).catch(function(e) {
+      console.error('Resume failed:', e);
+      schedule();
+    });
   } else {
-    startPlayback();
+    schedule();
   }
 }
 
 function stopMusic() {
-  if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
-  if (musicNodes) {
-    musicNodes.forEach(function(n) {
-      try { if (n.osc) n.osc.stop(); } catch(e){}
-      try { if (n.gain) n.gain.disconnect(); } catch(e){}
-      try { if (n.osc) n.osc.disconnect(); } catch(e){}
-    });
-    musicNodes = [];
-  }
+  musicNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  musicNodes = [];
 }
 
 if ('serviceWorker' in navigator) {
