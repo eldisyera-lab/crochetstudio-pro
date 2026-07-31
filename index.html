@@ -427,30 +427,19 @@
   .music-toggle.playing { background: var(--accent); color: #fff; border-color: var(--accent); animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(196,92,62,0.4); } 70% { box-shadow: 0 0 0 10px rgba(196,92,62,0); } 100% { box-shadow: 0 0 0 0 rgba(196,92,62,0); } }
 
-  
-  /* === MI BIBLIOTECA FLOW === */
+    /* === MI BIBLIOTECA FLOW === */
   .music-tabs { display:flex; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:8px; }
   .music-tab { flex:1; padding:10px; border-radius:var(--radius-sm); border:none; background:var(--bg-muted); color:var(--text-secondary); font-size:13px; cursor:pointer; font-family:inherit; font-weight:500; transition:all 0.2s; }
   .music-tab:hover { color:var(--text); }
   .music-tab.active { background:var(--accent); color:#fff; }
   .flow-section { display:none; }
   .flow-section.active { display:block; animation:fadeIn 0.3s ease; }
-
-  .drop-zone {
-    border:2px dashed var(--border); border-radius:var(--radius); padding:32px 20px;
-    text-align:center; color:var(--text-muted); cursor:pointer; transition:all 0.2s;
-    background:var(--bg-raised); margin-bottom:16px;
-  }
+  .drop-zone { border:2px dashed var(--border); border-radius:var(--radius); padding:32px 20px; text-align:center; color:var(--text-muted); cursor:pointer; transition:all 0.2s; background:var(--bg-raised); margin-bottom:16px; }
   .drop-zone:hover, .drop-zone.dragover { border-color:var(--accent); background:var(--accent-light); color:var(--accent); }
   .drop-zone svg { width:40px; height:40px; margin-bottom:8px; opacity:0.5; }
   .drop-zone:hover svg, .drop-zone.dragover svg { opacity:1; }
-
   .flow-track-list { max-height:220px; overflow-y:auto; margin-bottom:12px; }
-  .flow-track-item {
-    display:flex; align-items:center; gap:10px; padding:10px 12px;
-    background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
-    margin-bottom:6px; cursor:pointer; transition:all 0.2s;
-  }
+  .flow-track-item { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:6px; cursor:pointer; transition:all 0.2s; }
   .flow-track-item:hover { border-color:var(--accent); }
   .flow-track-item.active { background:var(--accent-light); border-color:var(--accent); }
   .flow-track-item .t-num { width:22px; height:22px; border-radius:50%; background:var(--bg-muted); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--text-muted); flex-shrink:0; }
@@ -458,49 +447,32 @@
   .flow-track-item .t-name { flex:1; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .flow-track-item .t-del { width:28px; height:28px; border-radius:50%; border:none; background:transparent; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all 0.2s; }
   .flow-track-item .t-del:hover { background:var(--danger); color:#fff; }
-
-  .flow-player {
-    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:14px;
-  }
+  .flow-player { background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:14px; }
   .flow-player .now-playing { font-size:13px; font-weight:500; margin-bottom:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center; }
   .flow-player .now-playing span { color:var(--text-muted); font-weight:400; }
-
   .player-controls { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:10px; }
-  .player-btn {
-    width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
-    background:var(--bg-card); color:var(--text); cursor:pointer; display:flex;
-    align-items:center; justify-content:center; transition:all 0.2s; font-size:18px;
-  }
+  .player-btn { width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--bg-card); color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; font-size:18px; }
   .player-btn:hover { border-color:var(--accent); color:var(--accent); transform:scale(1.05); }
   .player-btn.play { width:48px; height:48px; background:var(--accent); color:#fff; border-color:var(--accent); font-size:20px; }
   .player-btn.play:hover { background:var(--accent-hover); }
-
   .progress-wrap { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
   .progress-wrap span { font-size:11px; color:var(--text-muted); width:36px; text-align:center; }
-  .progress-bar {
-    flex:1; height:6px; background:var(--bg-muted); border-radius:10px; cursor:pointer;
-    position:relative; overflow:hidden;
-  }
+  .progress-bar { flex:1; height:6px; background:var(--bg-muted); border-radius:10px; cursor:pointer; position:relative; overflow:hidden; }
   .progress-fill { height:100%; background:var(--accent); border-radius:10px; width:0%; transition:width 0.1s linear; }
-
   .volume-wrap { display:flex; align-items:center; gap:10px; justify-content:center; }
   .volume-wrap span { font-size:16px; }
   .volume-slider { width:120px; -webkit-appearance:none; appearance:none; height:4px; background:var(--bg-muted); border-radius:10px; outline:none; }
   .volume-slider::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--accent); cursor:pointer; }
-
   .empty-library { text-align:center; padding:24px; color:var(--text-muted); font-size:13px; }
   .empty-library svg { width:48px; height:48px; margin-bottom:12px; opacity:0.4; }
-
   .visualizer { display:flex; align-items:flex-end; justify-content:center; gap:3px; height:24px; margin-bottom:10px; }
   .visualizer .bar { width:4px; background:var(--accent); border-radius:2px; transition:height 0.15s ease; height:4px; opacity:0.3; }
-
   @media (max-width: 600px) {
     .flow-track-list { max-height:160px; }
     .player-btn { width:36px; height:36px; font-size:16px; }
     .player-btn.play { width:42px; height:42px; font-size:18px; }
     .volume-slider { width:80px; }
   }
-
   @media print {
     .header, .nav, .panel:not(.grid-area), .modal-bg, .toast, .grid-controls, .fab-container, .music-toggle { display: none !important; }
     .editor-wrap { display: block !important; }
@@ -1708,8 +1680,8 @@ function showMusicMenu() {
   document.getElementById('modalText').style.display = 'none';
   document.getElementById('modalBody').innerHTML = 
     '<div class="music-tabs">' +
-    '<button class="music-tab active" onclick="switchMusicTab('ambient', this)">🎹 Ambiental</button>' +
-    '<button class="music-tab" onclick="switchMusicTab('flow', this)">🎧 Mi Biblioteca Flow</button>' +
+    '<button class="music-tab active" onclick="switchMusicTab(\'ambient\', this)">🎹 Ambiental</button>' +
+    '<button class="music-tab" onclick="switchMusicTab(\'flow\', this)">🎧 Mi Biblioteca Flow</button>' +
     '</div>' +
     '<div id="tab-ambient" class="flow-section active">' +
     '<p style="color:var(--text-secondary); font-size:13px; margin-bottom:12px;">Música generada por IA interna. No necesita internet ni archivos.</p>' +
@@ -1738,11 +1710,10 @@ function showMusicMenu() {
     '</div>' +
     '</div>';
 
-  // Render ambient tracks
   const ambientList = document.getElementById('ambientTrackList');
   ambientList.innerHTML = musicLibrary.map(function(track, i) {
     const sel = i === currentTrack ? 'checked' : '';
-    return '<div class="export-option" onclick="selectAmbientTrack(' + i + ')">' +
+    return '<div class="export-option" onclick="selectAmbientTrack(\' + i + '\')">' +
       '<input type="radio" name="track" id="a' + i + '" ' + sel + '>' +
       '<label><strong>' + track.name + '</strong><br><small>' + track.desc + '</small></label>' +
       '</div>';
@@ -1753,10 +1724,8 @@ function showMusicMenu() {
   document.getElementById('modalConfirm').onclick = function() { closeModal(); };
   document.getElementById('modalBg').classList.add('active');
 
-  // Setup flow library
   refreshFlowList();
 
-  // Setup drag & drop
   const dz = document.getElementById('flowDropZone');
   const fi = document.getElementById('flowFileInput');
   dz.onclick = () => fi.click();
@@ -1798,11 +1767,6 @@ function selectTrack(idx) {
 
 function startTrack(idx) {
   ensureAudioCtx().then(function() {
-    // Detener Flow si está sonando
-    if (flowAudio && !flowAudio.paused) {
-      flowAudio.pause();
-      flowIsPlaying = false;
-    }
     stopMusic();
     currentTrack = idx;
     musicPlaying = true;
@@ -1813,247 +1777,6 @@ function startTrack(idx) {
   }).catch(function(e) {
     console.error('Audio error:', e);
     showToast('No se pudo iniciar el audio. Intenta de nuevo.');
-  });
-}
-
-// === MI BIBLIOTECA FLOW ===
-let flowTracks = [];
-let flowCurrentIndex = -1;
-let flowAudio = null;
-let flowIsPlaying = false;
-let flowDB = null;
-
-function initFlowDB() {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open('CrochetStudioFlow', 1);
-    req.onerror = () => reject(req.error);
-    req.onsuccess = () => { flowDB = req.result; resolve(flowDB); };
-    req.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains('tracks')) {
-        db.createObjectStore('tracks', { keyPath: 'id', autoIncrement: true });
-      }
-    };
-  });
-}
-
-async function loadFlowTracks() {
-  if (!flowDB) await initFlowDB();
-  const tx = flowDB.transaction('tracks', 'readonly');
-  const store = tx.objectStore('tracks');
-  return new Promise((resolve, reject) => {
-    const req = store.getAll();
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function addFlowTrack(name, buffer, type) {
-  if (!flowDB) await initFlowDB();
-  const tx = flowDB.transaction('tracks', 'readwrite');
-  const store = tx.objectStore('tracks');
-  return new Promise((resolve, reject) => {
-    const req = store.add({ name, data: buffer, type, added: Date.now() });
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function deleteFlowTrack(id) {
-  if (!flowDB) await initFlowDB();
-  const tx = flowDB.transaction('tracks', 'readwrite');
-  const store = tx.objectStore('tracks');
-  return new Promise((resolve, reject) => {
-    const req = store.delete(id);
-    req.onsuccess = () => resolve();
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function refreshFlowList() {
-  flowTracks = await loadFlowTracks();
-  renderFlowList();
-}
-
-function renderFlowList() {
-  const list = document.getElementById('flowTrackList');
-  if (!list) return;
-  if (!flowTracks.length) {
-    list.innerHTML = '<div class="empty-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><p>Tu biblioteca está vacía</p><p style="font-size:12px; margin-top:4px;">Arrastra archivos MP3 o haz clic para cargar</p></div>';
-    return;
-  }
-  list.innerHTML = flowTracks.map((t, i) => 
-    '<div class="flow-track-item ' + (i===flowCurrentIndex?'active':'') + '" onclick="playFlowTrack(' + i + ')">' +
-    '<div class="t-num">' + (i+1) + '</div>' +
-    '<div class="t-name">' + escapeHtml(t.name) + '</div>' +
-    '<button class="t-del" onclick="event.stopPropagation(); removeFlowTrack(' + t.id + ')">×</button></div>'
-  ).join('');
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-function playFlowTrack(index) {
-  if (!flowAudio) flowAudio = document.getElementById('flowAudioPlayer');
-  if (index < 0 || index >= flowTracks.length) return;
-
-  // Detener música procedural si está sonando
-  if (musicPlaying) {
-    stopMusic();
-    musicPlaying = false;
-  }
-
-  flowCurrentIndex = index;
-  const track = flowTracks[index];
-  const blob = new Blob([track.data], { type: track.type || 'audio/mpeg' });
-  const url = URL.createObjectURL(blob);
-
-  flowAudio.src = url;
-  flowAudio.play().then(() => {
-    flowIsPlaying = true;
-    updateFlowPlayerUI();
-    document.getElementById('musicToggle').classList.add('playing');
-    document.getElementById('musicIcon').textContent = '♪';
-  }).catch(e => {
-    console.error(e);
-    showToast('Error al reproducir. Intenta de nuevo.');
-  });
-
-  flowAudio.onended = () => {
-    if (flowCurrentIndex < flowTracks.length - 1) {
-      playFlowTrack(flowCurrentIndex + 1);
-    } else {
-      flowIsPlaying = false;
-      updateFlowPlayerUI();
-      document.getElementById('musicToggle').classList.remove('playing');
-      document.getElementById('musicIcon').textContent = '♫';
-    }
-  };
-
-  flowAudio.ontimeupdate = updateFlowProgress;
-  renderFlowList();
-}
-
-function toggleFlowPlay() {
-  if (!flowAudio || flowCurrentIndex === -1) {
-    if (flowTracks.length) playFlowTrack(0);
-    return;
-  }
-  if (flowAudio.paused) {
-    flowAudio.play();
-    flowIsPlaying = true;
-    document.getElementById('musicToggle').classList.add('playing');
-    document.getElementById('musicIcon').textContent = '♪';
-  } else {
-    flowAudio.pause();
-    flowIsPlaying = false;
-    document.getElementById('musicToggle').classList.remove('playing');
-    document.getElementById('musicIcon').textContent = '♫';
-  }
-  updateFlowPlayerUI();
-}
-
-function playFlowPrev() {
-  if (flowCurrentIndex > 0) playFlowTrack(flowCurrentIndex - 1);
-  else if (flowTracks.length) playFlowTrack(flowTracks.length - 1);
-}
-
-function playFlowNext() {
-  if (flowCurrentIndex < flowTracks.length - 1) playFlowTrack(flowCurrentIndex + 1);
-  else if (flowTracks.length) playFlowTrack(0);
-}
-
-function updateFlowPlayerUI() {
-  const nameEl = document.getElementById('flowNowPlaying');
-  if (nameEl) {
-    const name = flowCurrentIndex >= 0 ? flowTracks[flowCurrentIndex].name : 'Ninguna canción seleccionada';
-    nameEl.innerHTML = '<span>Reproduciendo:</span> ' + escapeHtml(name);
-  }
-  const btn = document.getElementById('flowPlayBtn');
-  if (btn) btn.textContent = (flowAudio && !flowAudio.paused) ? '⏸' : '▶';
-  renderFlowList();
-}
-
-function updateFlowProgress() {
-  if (!flowAudio) return;
-  const pct = flowAudio.duration ? (flowAudio.currentTime / flowAudio.duration) * 100 : 0;
-  const fill = document.getElementById('flowProgressFill');
-  if (fill) fill.style.width = pct + '%';
-  const ct = document.getElementById('flowCurrentTime');
-  if (ct) ct.textContent = formatTime(flowAudio.currentTime);
-  const dur = document.getElementById('flowDuration');
-  if (dur) dur.textContent = formatTime(flowAudio.duration || 0);
-
-  // Visualizer simple
-  const bars = document.querySelectorAll('.visualizer .bar');
-  if (flowAudio && !flowAudio.paused) {
-    bars.forEach((bar) => {
-      const h = 4 + Math.random() * 20;
-      bar.style.height = h + 'px';
-      bar.style.opacity = 0.6 + Math.random() * 0.4;
-    });
-  } else {
-    bars.forEach(bar => { bar.style.height = '4px'; bar.style.opacity = '0.3'; });
-  }
-}
-
-function formatTime(s) {
-  if (isNaN(s)) return '0:00';
-  const m = Math.floor(s / 60);
-  const sec = Math.floor(s % 60);
-  return m + ':' + (sec < 10 ? '0' : '') + sec;
-}
-
-function seekFlow(e) {
-  if (!flowAudio || !flowAudio.duration) return;
-  const rect = e.currentTarget.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  flowAudio.currentTime = pct * flowAudio.duration;
-}
-
-function setFlowVolume(v) {
-  if (flowAudio) flowAudio.volume = v;
-}
-
-async function removeFlowTrack(id) {
-  await deleteFlowTrack(id);
-  if (flowAudio && !flowAudio.paused) {
-    flowAudio.pause();
-    flowAudio.src = '';
-    flowIsPlaying = false;
-    document.getElementById('musicToggle').classList.remove('playing');
-    document.getElementById('musicIcon').textContent = '♫';
-  }
-  if (flowCurrentIndex >= flowTracks.length - 1) flowCurrentIndex = -1;
-  await refreshFlowList();
-  updateFlowPlayerUI();
-  showToast('Canción eliminada');
-}
-
-function handleFlowFiles(files) {
-  const audioFiles = Array.from(files).filter(f => f.type.startsWith('audio/'));
-  if (!audioFiles.length) { showToast('Selecciona archivos de audio (MP3, WAV, OGG)'); return; }
-
-  let loaded = 0;
-  audioFiles.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        await addFlowTrack(file.name, e.target.result, file.type);
-        loaded++;
-        if (loaded === audioFiles.length) {
-          await refreshFlowList();
-          showToast(loaded + ' canción(es) agregada(s) a tu biblioteca');
-          updateFlowPlayerUI();
-        }
-      } catch (err) {
-        showToast('Error guardando: ' + file.name);
-      }
-    };
-    reader.readAsArrayBuffer(file);
   });
 }
 
@@ -2176,6 +1899,244 @@ function stopMusic() {
 }
 
 
+// === MI BIBLIOTECA FLOW ===
+let flowTracks = [];
+let flowCurrentIndex = -1;
+let flowAudio = null;
+let flowIsPlaying = false;
+let flowDB = null;
+
+function initFlowDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('CrochetStudioFlow', 1);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => { flowDB = req.result; resolve(flowDB); };
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('tracks')) {
+        db.createObjectStore('tracks', { keyPath: 'id', autoIncrement: true });
+      }
+    };
+  });
+}
+
+async function loadFlowTracks() {
+  if (!flowDB) await initFlowDB();
+  const tx = flowDB.transaction('tracks', 'readonly');
+  const store = tx.objectStore('tracks');
+  return new Promise((resolve, reject) => {
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function addFlowTrack(name, buffer, type) {
+  if (!flowDB) await initFlowDB();
+  const tx = flowDB.transaction('tracks', 'readwrite');
+  const store = tx.objectStore('tracks');
+  return new Promise((resolve, reject) => {
+    const req = store.add({ name, data: buffer, type, added: Date.now() });
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deleteFlowTrack(id) {
+  if (!flowDB) await initFlowDB();
+  const tx = flowDB.transaction('tracks', 'readwrite');
+  const store = tx.objectStore('tracks');
+  return new Promise((resolve, reject) => {
+    const req = store.delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function refreshFlowList() {
+  flowTracks = await loadFlowTracks();
+  renderFlowList();
+}
+
+function renderFlowList() {
+  const list = document.getElementById('flowTrackList');
+  if (!list) return;
+  if (!flowTracks.length) {
+    list.innerHTML = '<div class="empty-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><p>Tu biblioteca está vacía</p><p style="font-size:12px; margin-top:4px;">Arrastra archivos MP3 o haz clic para cargar</p></div>';
+    return;
+  }
+  list.innerHTML = flowTracks.map((t, i) => 
+    '<div class="flow-track-item ' + (i===flowCurrentIndex?'active':'') + '" onclick="playFlowTrack(' + i + ')">' +
+    '<div class="t-num">' + (i+1) + '</div>' +
+    '<div class="t-name">' + escapeHtml(t.name) + '</div>' +
+    '<button class="t-del" onclick="event.stopPropagation(); removeFlowTrack(' + t.id + ')">×</button></div>'
+  ).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function playFlowTrack(index) {
+  if (!flowAudio) flowAudio = document.getElementById('flowAudioPlayer');
+  if (index < 0 || index >= flowTracks.length) return;
+
+  if (musicPlaying) {
+    stopMusic();
+    musicPlaying = false;
+  }
+
+  flowCurrentIndex = index;
+  const track = flowTracks[index];
+  const blob = new Blob([track.data], { type: track.type || 'audio/mpeg' });
+  const url = URL.createObjectURL(blob);
+
+  flowAudio.src = url;
+  flowAudio.play().then(() => {
+    flowIsPlaying = true;
+    updateFlowPlayerUI();
+    document.getElementById('musicToggle').classList.add('playing');
+    document.getElementById('musicIcon').textContent = '♪';
+  }).catch(e => {
+    console.error(e);
+    showToast('Error al reproducir. Intenta de nuevo.');
+  });
+
+  flowAudio.onended = () => {
+    if (flowCurrentIndex < flowTracks.length - 1) {
+      playFlowTrack(flowCurrentIndex + 1);
+    } else {
+      flowIsPlaying = false;
+      updateFlowPlayerUI();
+      document.getElementById('musicToggle').classList.remove('playing');
+      document.getElementById('musicIcon').textContent = '♫';
+    }
+  };
+
+  flowAudio.ontimeupdate = updateFlowProgress;
+  renderFlowList();
+}
+
+function toggleFlowPlay() {
+  if (!flowAudio || flowCurrentIndex === -1) {
+    if (flowTracks.length) playFlowTrack(0);
+    return;
+  }
+  if (flowAudio.paused) {
+    flowAudio.play();
+    flowIsPlaying = true;
+    document.getElementById('musicToggle').classList.add('playing');
+    document.getElementById('musicIcon').textContent = '♪';
+  } else {
+    flowAudio.pause();
+    flowIsPlaying = false;
+    document.getElementById('musicToggle').classList.remove('playing');
+    document.getElementById('musicIcon').textContent = '♫';
+  }
+  updateFlowPlayerUI();
+}
+
+function playFlowPrev() {
+  if (flowCurrentIndex > 0) playFlowTrack(flowCurrentIndex - 1);
+  else if (flowTracks.length) playFlowTrack(flowTracks.length - 1);
+}
+
+function playFlowNext() {
+  if (flowCurrentIndex < flowTracks.length - 1) playFlowTrack(flowCurrentIndex + 1);
+  else if (flowTracks.length) playFlowTrack(0);
+}
+
+function updateFlowPlayerUI() {
+  const nameEl = document.getElementById('flowNowPlaying');
+  if (nameEl) {
+    const name = flowCurrentIndex >= 0 ? flowTracks[flowCurrentIndex].name : 'Ninguna canción seleccionada';
+    nameEl.innerHTML = '<span>Reproduciendo:</span> ' + escapeHtml(name);
+  }
+  const btn = document.getElementById('flowPlayBtn');
+  if (btn) btn.textContent = (flowAudio && !flowAudio.paused) ? '⏸' : '▶';
+  renderFlowList();
+}
+
+function updateFlowProgress() {
+  if (!flowAudio) return;
+  const pct = flowAudio.duration ? (flowAudio.currentTime / flowAudio.duration) * 100 : 0;
+  const fill = document.getElementById('flowProgressFill');
+  if (fill) fill.style.width = pct + '%';
+  const ct = document.getElementById('flowCurrentTime');
+  if (ct) ct.textContent = formatTime(flowAudio.currentTime);
+  const dur = document.getElementById('flowDuration');
+  if (dur) dur.textContent = formatTime(flowAudio.duration || 0);
+
+  const bars = document.querySelectorAll('.visualizer .bar');
+  if (flowAudio && !flowAudio.paused) {
+    bars.forEach((bar) => {
+      const h = 4 + Math.random() * 20;
+      bar.style.height = h + 'px';
+      bar.style.opacity = 0.6 + Math.random() * 0.4;
+    });
+  } else {
+    bars.forEach(bar => { bar.style.height = '4px'; bar.style.opacity = '0.3'; });
+  }
+}
+
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+function seekFlow(e) {
+  if (!flowAudio || !flowAudio.duration) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  flowAudio.currentTime = pct * flowAudio.duration;
+}
+
+function setFlowVolume(v) {
+  if (flowAudio) flowAudio.volume = v;
+}
+
+async function removeFlowTrack(id) {
+  await deleteFlowTrack(id);
+  if (flowAudio && !flowAudio.paused) {
+    flowAudio.pause();
+    flowAudio.src = '';
+    flowIsPlaying = false;
+    document.getElementById('musicToggle').classList.remove('playing');
+    document.getElementById('musicIcon').textContent = '♫';
+  }
+  if (flowCurrentIndex >= flowTracks.length - 1) flowCurrentIndex = -1;
+  await refreshFlowList();
+  updateFlowPlayerUI();
+  showToast('Canción eliminada');
+}
+
+function handleFlowFiles(files) {
+  const audioFiles = Array.from(files).filter(f => f.type.startsWith('audio/'));
+  if (!audioFiles.length) { showToast('Selecciona archivos de audio (MP3, WAV, OGG)'); return; }
+
+  let loaded = 0;
+  audioFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        await addFlowTrack(file.name, e.target.result, file.type);
+        loaded++;
+        if (loaded === audioFiles.length) {
+          await refreshFlowList();
+          showToast(loaded + ' canción(es) agregada(s) a tu biblioteca');
+          updateFlowPlayerUI();
+        }
+      } catch (err) {
+        showToast('Error guardando: ' + file.name);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
