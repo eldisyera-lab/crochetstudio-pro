@@ -324,7 +324,9 @@
   .modal-bg.active { display: flex; }
   .modal-box {
     background: var(--bg-card); border-radius: 16px; padding: 28px;
-    max-width: 520px; width: 90%; border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+    max-width: 520px; width: 90%; max-height: 85vh; overflow-y: auto;
+    border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column;
   }
   .modal-box h3 { font-size: 18px; margin-bottom: 8px; }
   .modal-box p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.6; }
@@ -333,7 +335,8 @@
     padding: 10px 20px; border-radius: 10px; border: 1px solid var(--border);
     background: var(--bg-muted); font-size: 14px; cursor: pointer; font-family: inherit;
   }
-  .modal-actions button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .modal-actions button.primary { background: var(--success); color: #fff; border-color: var(--success); }
+  .modal-actions button.primary:hover { background: #2d7a4f; }
 
   .export-options { display: grid; gap: 10px; margin: 16px 0; }
   .export-option {
@@ -342,7 +345,7 @@
     background: var(--bg-card); transition: all 0.2s;
   }
   .export-option:hover { border-color: var(--accent); }
-  .export-option input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .export-option input { width: 18px; height: 18px; accent-color: var(--accent); pointer-events: none; flex-shrink: 0; }
   .export-option label { font-size: 14px; cursor: pointer; flex: 1; }
   .export-option small { font-size: 11px; color: var(--text-muted); }
 
@@ -450,6 +453,10 @@
     .fab-container { bottom: 16px; right: 16px; }
     .fab-main { width: 48px; height: 48px; font-size: 20px; }
     .music-toggle { bottom: 16px; left: 16px; width: 40px; height: 40px; font-size: 16px; }
+    .modal-box { padding: 20px; max-height: 80vh; width: 95%; }
+    .export-option { padding: 12px; }
+    .export-option label { font-size: 13px; }
+    .export-option small { font-size: 10px; }
   }
 </style>
 <base target="_blank">
@@ -1622,20 +1629,27 @@ function showMusicMenu() {
   document.getElementById('modalTitle').textContent = '♪ Biblioteca de música';
   document.getElementById('modalText').textContent = 'Elige un ambiente sonoro para tu sesión de crochet.';
   let body = '<div class="export-options">';
-  musicLibrary.forEach((track, i) => {
+  musicLibrary.forEach(function(track, i) {
     const sel = i === currentTrack ? 'checked' : '';
     body += '<div class="export-option" onclick="selectTrack(' + i + ')">' +
       '<input type="radio" name="track" id="t' + i + '" ' + sel + '>' +
-      '<label for="t' + i + '"><strong>' + track.name + '</strong><br><small>' + track.desc + '</small></label>' +
+      '<label><strong>' + track.name + '</strong><br><small>' + track.desc + '</small></label>' +
       '</div>';
   });
   body += '</div>';
   document.getElementById('modalBody').innerHTML = body;
   document.getElementById('modalConfirm').textContent = 'Reproducir';
+  document.getElementById('modalConfirm').classList.add('primary');
   document.getElementById('modalConfirm').onclick = function() {
     closeModal();
     if (musicLibrary[currentTrack].type !== 'none') {
       startTrack(currentTrack);
+    } else {
+      stopMusic();
+      musicPlaying = false;
+      document.getElementById('musicToggle').classList.remove('playing');
+      document.getElementById('musicIcon').textContent = '♫';
+      showToast('Música detenida');
     }
   };
   document.getElementById('modalBg').classList.add('active');
@@ -1643,7 +1657,7 @@ function showMusicMenu() {
 
 function selectTrack(idx) {
   currentTrack = idx;
-  document.querySelectorAll('input[name="track"]').forEach((r, i) => { r.checked = i === idx; });
+  document.querySelectorAll('input[name="track"]').forEach(function(r, i) { r.checked = i === idx; });
 }
 
 function startTrack(idx) {
