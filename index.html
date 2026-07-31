@@ -2056,6 +2056,126 @@ function handleFlowFiles(files) {
     reader.readAsArrayBuffer(file);
   });
 }
+
+function playTone(freq, time, duration, volume, type) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, time);
+  gain.gain.linearRampToValueAtTime(volume, time + 0.15);
+  gain.gain.setValueAtTime(volume, time + duration - 0.3);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
+  osc.connect(gain);
+  gain.connect(masterGain);
+  osc.start(time);
+  osc.stop(time + duration);
+  musicNodes.push({osc: osc, gain: gain});
+}
+
+function playChord(freqs, time, duration, volume, type) {
+  freqs.forEach(function(f, i) {
+    playTone(f, time + i * 0.08, duration, volume * (0.6 - i * 0.1), type);
+  });
+}
+
+function playTrackPattern(idx) {
+  if (!musicPlaying) return;
+  const now = audioCtx.currentTime;
+  const track = musicLibrary[idx];
+
+  if (track.type === 'bells') {
+    // Campanitas - escala pentatónica, notas espaciadas
+    const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
+    const note = scale[Math.floor(Math.random() * scale.length)];
+    playTone(note, now, 2.5, 0.4, 'sine');
+    playTone(note * 1.5, now + 0.1, 2.0, 0.15, 'sine');
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2800);
+  }
+  else if (track.type === 'flute') {
+    // Flauta - melodía suave con legato
+    const scale = [392.00, 440.00, 493.88, 523.25, 587.33, 659.25];
+    const pattern = [0, 2, 4, 3, 1, 3, 2, 0];
+    const i = Math.floor(Date.now() / 2000) % pattern.length;
+    const note = scale[pattern[i]];
+    playTone(note, now, 3.0, 0.35, 'triangle');
+    playTone(note * 2, now + 0.2, 2.5, 0.12, 'sine');
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2200);
+  }
+  else if (track.type === 'rain') {
+    // Lluvia de estrellas - arpegios descendentes
+    const base = 659.25;
+    playTone(base, now, 1.5, 0.3, 'sine');
+    playTone(base * 0.75, now + 0.3, 1.5, 0.25, 'sine');
+    playTone(base * 0.5, now + 0.6, 1.5, 0.2, 'sine');
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2000);
+  }
+  else if (track.type === 'zen') {
+    // Drones zen - notas largas y profundas
+    const drones = [130.81, 164.81, 196.00];
+    drones.forEach(function(d, i) {
+      playTone(d, now + i * 0.5, 6.0, 0.2 - i * 0.03, 'triangle');
+    });
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 5500);
+  }
+  else if (track.type === 'forest') {
+    // Bosque - patrón orgánico impredecible
+    const scale = [329.63, 392.00, 440.00, 523.25, 587.33];
+    const note = scale[Math.floor(Math.random() * scale.length)];
+    const dur = 1.5 + Math.random() * 2;
+    playTone(note, now, dur, 0.3, 'triangle');
+    if (Math.random() > 0.5) {
+      playTone(note * 1.25, now + 0.2, dur * 0.7, 0.15, 'sine');
+    }
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, dur * 1000 + 500);
+  }
+  else if (track.type === 'waves') {
+    // Olas - movimiento suave entre dos notas
+    const n1 = 261.63, n2 = 329.63;
+    playTone(n1, now, 3.0, 0.25, 'sine');
+    playTone(n2, now + 1.5, 3.0, 0.25, 'sine');
+    playTone(n1 * 0.5, now, 4.0, 0.15, 'triangle');
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 3500);
+  }
+  else if (track.type === 'sunrise') {
+    // Amanecer - progresión ascendente
+    const chord = [261.63, 329.63, 392.00, 523.25];
+    playChord(chord, now, 4.0, 0.3, 'sine');
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 4500);
+  }
+  else if (track.type === 'night') {
+    // Noche estrellada - lenta y contemplativa
+    const scale = [220.00, 261.63, 293.66, 329.63, 392.00];
+    const note = scale[Math.floor(Math.random() * scale.length)];
+    playTone(note, now, 4.0, 0.3, 'sine');
+    playTone(note * 1.5, now + 0.5, 3.5, 0.12, 'sine');
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 5000);
+  }
+  else if (track.type === 'garden') {
+    // Jardín japonés - pentatónica oriental
+    const scale = [392.00, 440.00, 523.25, 587.33, 659.25];
+    const pattern = [0, 1, 2, 1, 0, 3, 4, 3, 2, 1];
+    const i = Math.floor(Date.now() / 1800) % pattern.length;
+    const note = scale[pattern[i]];
+    playTone(note, now, 2.0, 0.35, 'triangle');
+    playTone(note * 2, now + 0.15, 1.5, 0.1, 'sine');
+    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2000);
+  }
+}
+
+function stopMusic() {
+  if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
+  if (musicNodes) {
+    musicNodes.forEach(function(n) {
+      try { if (n.osc) n.osc.stop(); } catch(e){}
+      try { if (n.gain) n.gain.disconnect(); } catch(e){}
+      try { if (n.osc) n.osc.disconnect(); } catch(e){}
+    });
+    musicNodes = [];
+  }
+}
+
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
