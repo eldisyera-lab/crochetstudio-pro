@@ -427,6 +427,80 @@
   .music-toggle.playing { background: var(--accent); color: #fff; border-color: var(--accent); animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(196,92,62,0.4); } 70% { box-shadow: 0 0 0 10px rgba(196,92,62,0); } 100% { box-shadow: 0 0 0 0 rgba(196,92,62,0); } }
 
+  
+  /* === MI BIBLIOTECA FLOW === */
+  .music-tabs { display:flex; gap:8px; margin-bottom:16px; border-bottom:1px solid var(--border); padding-bottom:8px; }
+  .music-tab { flex:1; padding:10px; border-radius:var(--radius-sm); border:none; background:var(--bg-muted); color:var(--text-secondary); font-size:13px; cursor:pointer; font-family:inherit; font-weight:500; transition:all 0.2s; }
+  .music-tab:hover { color:var(--text); }
+  .music-tab.active { background:var(--accent); color:#fff; }
+  .flow-section { display:none; }
+  .flow-section.active { display:block; animation:fadeIn 0.3s ease; }
+
+  .drop-zone {
+    border:2px dashed var(--border); border-radius:var(--radius); padding:32px 20px;
+    text-align:center; color:var(--text-muted); cursor:pointer; transition:all 0.2s;
+    background:var(--bg-raised); margin-bottom:16px;
+  }
+  .drop-zone:hover, .drop-zone.dragover { border-color:var(--accent); background:var(--accent-light); color:var(--accent); }
+  .drop-zone svg { width:40px; height:40px; margin-bottom:8px; opacity:0.5; }
+  .drop-zone:hover svg, .drop-zone.dragover svg { opacity:1; }
+
+  .flow-track-list { max-height:220px; overflow-y:auto; margin-bottom:12px; }
+  .flow-track-item {
+    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm);
+    margin-bottom:6px; cursor:pointer; transition:all 0.2s;
+  }
+  .flow-track-item:hover { border-color:var(--accent); }
+  .flow-track-item.active { background:var(--accent-light); border-color:var(--accent); }
+  .flow-track-item .t-num { width:22px; height:22px; border-radius:50%; background:var(--bg-muted); display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--text-muted); flex-shrink:0; }
+  .flow-track-item.active .t-num { background:var(--accent); color:#fff; }
+  .flow-track-item .t-name { flex:1; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .flow-track-item .t-del { width:28px; height:28px; border-radius:50%; border:none; background:transparent; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all 0.2s; }
+  .flow-track-item .t-del:hover { background:var(--danger); color:#fff; }
+
+  .flow-player {
+    background:var(--bg-raised); border:1px solid var(--border); border-radius:var(--radius); padding:14px;
+  }
+  .flow-player .now-playing { font-size:13px; font-weight:500; margin-bottom:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-align:center; }
+  .flow-player .now-playing span { color:var(--text-muted); font-weight:400; }
+
+  .player-controls { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:10px; }
+  .player-btn {
+    width:40px; height:40px; border-radius:50%; border:1px solid var(--border);
+    background:var(--bg-card); color:var(--text); cursor:pointer; display:flex;
+    align-items:center; justify-content:center; transition:all 0.2s; font-size:18px;
+  }
+  .player-btn:hover { border-color:var(--accent); color:var(--accent); transform:scale(1.05); }
+  .player-btn.play { width:48px; height:48px; background:var(--accent); color:#fff; border-color:var(--accent); font-size:20px; }
+  .player-btn.play:hover { background:var(--accent-hover); }
+
+  .progress-wrap { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .progress-wrap span { font-size:11px; color:var(--text-muted); width:36px; text-align:center; }
+  .progress-bar {
+    flex:1; height:6px; background:var(--bg-muted); border-radius:10px; cursor:pointer;
+    position:relative; overflow:hidden;
+  }
+  .progress-fill { height:100%; background:var(--accent); border-radius:10px; width:0%; transition:width 0.1s linear; }
+
+  .volume-wrap { display:flex; align-items:center; gap:10px; justify-content:center; }
+  .volume-wrap span { font-size:16px; }
+  .volume-slider { width:120px; -webkit-appearance:none; appearance:none; height:4px; background:var(--bg-muted); border-radius:10px; outline:none; }
+  .volume-slider::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:var(--accent); cursor:pointer; }
+
+  .empty-library { text-align:center; padding:24px; color:var(--text-muted); font-size:13px; }
+  .empty-library svg { width:48px; height:48px; margin-bottom:12px; opacity:0.4; }
+
+  .visualizer { display:flex; align-items:flex-end; justify-content:center; gap:3px; height:24px; margin-bottom:10px; }
+  .visualizer .bar { width:4px; background:var(--accent); border-radius:2px; transition:height 0.15s ease; height:4px; opacity:0.3; }
+
+  @media (max-width: 600px) {
+    .flow-track-list { max-height:160px; }
+    .player-btn { width:36px; height:36px; font-size:16px; }
+    .player-btn.play { width:42px; height:42px; font-size:18px; }
+    .volume-slider { width:80px; }
+  }
+
   @media print {
     .header, .nav, .panel:not(.grid-area), .modal-bg, .toast, .grid-controls, .fab-container, .music-toggle { display: none !important; }
     .editor-wrap { display: block !important; }
@@ -459,6 +533,7 @@
     .export-option small { font-size: 10px; }
   }
 </style>
+<base target="_blank">
 <base target="_blank">
 <base target="_blank">
 <base target="_blank">
@@ -897,6 +972,7 @@
   <span id="musicIcon">&#9835;</span>
 </button>
 
+<audio id="flowAudioPlayer" style="display:none"></audio>
 <!-- MODALS -->
 <div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
   <div class="modal-box" id="modalBox">
@@ -1010,6 +1086,7 @@ function init() {
   renderPalette(); renderColorPalette(); renderSymbols();
   renderTemplates(); renderDesigns(); calculate(); calculateMaterials();
   renderGrid(); saveHistory();
+  initFlowDB().then(() => { console.log('Flow DB ready'); }).catch(() => {});
 }
 
 function renderPalette() {
@@ -1614,8 +1691,9 @@ function ensureAudioCtx() {
 }
 
 function toggleMusic() {
-  if (musicPlaying) {
+  if (musicPlaying || (flowAudio && !flowAudio.paused)) {
     stopMusic();
+    if (flowAudio) { flowAudio.pause(); flowIsPlaying = false; }
     musicPlaying = false;
     document.getElementById('musicToggle').classList.remove('playing');
     document.getElementById('musicIcon').textContent = '♫';
@@ -1627,32 +1705,90 @@ function toggleMusic() {
 
 function showMusicMenu() {
   document.getElementById('modalTitle').textContent = '♪ Biblioteca de música';
-  document.getElementById('modalText').textContent = 'Elige un ambiente sonoro para tu sesión de crochet.';
-  let body = '<div class="export-options">';
-  musicLibrary.forEach(function(track, i) {
+  document.getElementById('modalText').style.display = 'none';
+  document.getElementById('modalBody').innerHTML = 
+    '<div class="music-tabs">' +
+    '<button class="music-tab active" onclick="switchMusicTab('ambient', this)">🎹 Ambiental</button>' +
+    '<button class="music-tab" onclick="switchMusicTab('flow', this)">🎧 Mi Biblioteca Flow</button>' +
+    '</div>' +
+    '<div id="tab-ambient" class="flow-section active">' +
+    '<p style="color:var(--text-secondary); font-size:13px; margin-bottom:12px;">Música generada por IA interna. No necesita internet ni archivos.</p>' +
+    '<div class="export-options" id="ambientTrackList"></div>' +
+    '<div style="margin-top:12px; text-align:center;">' +
+    '<button class="btn-primary" style="width:auto; padding:10px 24px;" id="ambientPlayBtn" onclick="playAmbientFromMenu()">Reproducir selección</button>' +
+    '</div>' +
+    '</div>' +
+    '<div id="tab-flow" class="flow-section">' +
+    '<div class="drop-zone" id="flowDropZone">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
+    '<p><strong>Arrastra tus MP3 aquí</strong></p><p style="font-size:12px; margin-top:4px;">o haz clic para seleccionar archivos</p>' +
+    '<input type="file" id="flowFileInput" accept="audio/*" multiple style="display:none">' +
+    '</div>' +
+    '<div class="flow-track-list" id="flowTrackList"></div>' +
+    '<div class="flow-player">' +
+    '<div class="visualizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>' +
+    '<div class="now-playing" id="flowNowPlaying"><span>Reproduciendo:</span> Ninguna canción seleccionada</div>' +
+    '<div class="progress-wrap"><span id="flowCurrentTime">0:00</span><div class="progress-bar" onclick="seekFlow(event)"><div class="progress-fill" id="flowProgressFill"></div></div><span id="flowDuration">0:00</span></div>' +
+    '<div class="player-controls">' +
+    '<button class="player-btn" onclick="playFlowPrev()">⏮</button>' +
+    '<button class="player-btn play" id="flowPlayBtn" onclick="toggleFlowPlay()">▶</button>' +
+    '<button class="player-btn" onclick="playFlowNext()">⏭</button>' +
+    '</div>' +
+    '<div class="volume-wrap"><span>🔊</span><input type="range" class="volume-slider" min="0" max="1" step="0.05" value="1" oninput="setFlowVolume(this.value)"></div>' +
+    '</div>' +
+    '</div>';
+
+  // Render ambient tracks
+  const ambientList = document.getElementById('ambientTrackList');
+  ambientList.innerHTML = musicLibrary.map(function(track, i) {
     const sel = i === currentTrack ? 'checked' : '';
-    body += '<div class="export-option" onclick="selectTrack(' + i + ')">' +
-      '<input type="radio" name="track" id="t' + i + '" ' + sel + '>' +
+    return '<div class="export-option" onclick="selectAmbientTrack(' + i + ')">' +
+      '<input type="radio" name="track" id="a' + i + '" ' + sel + '>' +
       '<label><strong>' + track.name + '</strong><br><small>' + track.desc + '</small></label>' +
       '</div>';
-  });
-  body += '</div>';
-  document.getElementById('modalBody').innerHTML = body;
-  document.getElementById('modalConfirm').textContent = 'Reproducir';
-  document.getElementById('modalConfirm').classList.add('primary');
-  document.getElementById('modalConfirm').onclick = function() {
-    closeModal();
-    if (musicLibrary[currentTrack].type !== 'none') {
-      startTrack(currentTrack);
-    } else {
-      stopMusic();
-      musicPlaying = false;
-      document.getElementById('musicToggle').classList.remove('playing');
-      document.getElementById('musicIcon').textContent = '♫';
-      showToast('Música detenida');
-    }
-  };
+  }).join('');
+
+  document.getElementById('modalConfirm').textContent = 'Cerrar';
+  document.getElementById('modalConfirm').classList.remove('primary');
+  document.getElementById('modalConfirm').onclick = function() { closeModal(); };
   document.getElementById('modalBg').classList.add('active');
+
+  // Setup flow library
+  refreshFlowList();
+
+  // Setup drag & drop
+  const dz = document.getElementById('flowDropZone');
+  const fi = document.getElementById('flowFileInput');
+  dz.onclick = () => fi.click();
+  fi.onchange = (e) => { if (e.target.files.length) handleFlowFiles(e.target.files); };
+  dz.ondragover = (e) => { e.preventDefault(); dz.classList.add('dragover'); };
+  dz.ondragleave = () => dz.classList.remove('dragover');
+  dz.ondrop = (e) => { e.preventDefault(); dz.classList.remove('dragover'); handleFlowFiles(e.dataTransfer.files); };
+}
+
+function switchMusicTab(tab, btn) {
+  document.querySelectorAll('.music-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.flow-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function selectAmbientTrack(idx) {
+  currentTrack = idx;
+  document.querySelectorAll('input[name="track"]').forEach(function(r, i) { r.checked = i === idx; });
+}
+
+function playAmbientFromMenu() {
+  if (musicLibrary[currentTrack].type === 'none') {
+    stopMusic();
+    musicPlaying = false;
+    document.getElementById('musicToggle').classList.remove('playing');
+    document.getElementById('musicIcon').textContent = '♫';
+    showToast('Música detenida');
+  } else {
+    startTrack(currentTrack);
+  }
+  closeModal();
 }
 
 function selectTrack(idx) {
@@ -1662,6 +1798,11 @@ function selectTrack(idx) {
 
 function startTrack(idx) {
   ensureAudioCtx().then(function() {
+    // Detener Flow si está sonando
+    if (flowAudio && !flowAudio.paused) {
+      flowAudio.pause();
+      flowIsPlaying = false;
+    }
     stopMusic();
     currentTrack = idx;
     musicPlaying = true;
@@ -1675,124 +1816,246 @@ function startTrack(idx) {
   });
 }
 
-function playTone(freq, time, duration, volume, type) {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type || 'sine';
-  osc.frequency.value = freq;
-  gain.gain.setValueAtTime(0, time);
-  gain.gain.linearRampToValueAtTime(volume, time + 0.15);
-  gain.gain.setValueAtTime(volume, time + duration - 0.3);
-  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
-  osc.connect(gain);
-  gain.connect(masterGain);
-  osc.start(time);
-  osc.stop(time + duration);
-  musicNodes.push({osc: osc, gain: gain});
-}
+// === MI BIBLIOTECA FLOW ===
+let flowTracks = [];
+let flowCurrentIndex = -1;
+let flowAudio = null;
+let flowIsPlaying = false;
+let flowDB = null;
 
-function playChord(freqs, time, duration, volume, type) {
-  freqs.forEach(function(f, i) {
-    playTone(f, time + i * 0.08, duration, volume * (0.6 - i * 0.1), type);
+function initFlowDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('CrochetStudioFlow', 1);
+    req.onerror = () => reject(req.error);
+    req.onsuccess = () => { flowDB = req.result; resolve(flowDB); };
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('tracks')) {
+        db.createObjectStore('tracks', { keyPath: 'id', autoIncrement: true });
+      }
+    };
   });
 }
 
-function playTrackPattern(idx) {
-  if (!musicPlaying) return;
-  const now = audioCtx.currentTime;
-  const track = musicLibrary[idx];
+async function loadFlowTracks() {
+  if (!flowDB) await initFlowDB();
+  const tx = flowDB.transaction('tracks', 'readonly');
+  const store = tx.objectStore('tracks');
+  return new Promise((resolve, reject) => {
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
 
-  if (track.type === 'bells') {
-    // Campanitas - escala pentatónica, notas espaciadas
-    const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
-    const note = scale[Math.floor(Math.random() * scale.length)];
-    playTone(note, now, 2.5, 0.4, 'sine');
-    playTone(note * 1.5, now + 0.1, 2.0, 0.15, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2800);
+async function addFlowTrack(name, buffer, type) {
+  if (!flowDB) await initFlowDB();
+  const tx = flowDB.transaction('tracks', 'readwrite');
+  const store = tx.objectStore('tracks');
+  return new Promise((resolve, reject) => {
+    const req = store.add({ name, data: buffer, type, added: Date.now() });
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deleteFlowTrack(id) {
+  if (!flowDB) await initFlowDB();
+  const tx = flowDB.transaction('tracks', 'readwrite');
+  const store = tx.objectStore('tracks');
+  return new Promise((resolve, reject) => {
+    const req = store.delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function refreshFlowList() {
+  flowTracks = await loadFlowTracks();
+  renderFlowList();
+}
+
+function renderFlowList() {
+  const list = document.getElementById('flowTrackList');
+  if (!list) return;
+  if (!flowTracks.length) {
+    list.innerHTML = '<div class="empty-library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><p>Tu biblioteca está vacía</p><p style="font-size:12px; margin-top:4px;">Arrastra archivos MP3 o haz clic para cargar</p></div>';
+    return;
   }
-  else if (track.type === 'flute') {
-    // Flauta - melodía suave con legato
-    const scale = [392.00, 440.00, 493.88, 523.25, 587.33, 659.25];
-    const pattern = [0, 2, 4, 3, 1, 3, 2, 0];
-    const i = Math.floor(Date.now() / 2000) % pattern.length;
-    const note = scale[pattern[i]];
-    playTone(note, now, 3.0, 0.35, 'triangle');
-    playTone(note * 2, now + 0.2, 2.5, 0.12, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2200);
+  list.innerHTML = flowTracks.map((t, i) => 
+    '<div class="flow-track-item ' + (i===flowCurrentIndex?'active':'') + '" onclick="playFlowTrack(' + i + ')">' +
+    '<div class="t-num">' + (i+1) + '</div>' +
+    '<div class="t-name">' + escapeHtml(t.name) + '</div>' +
+    '<button class="t-del" onclick="event.stopPropagation(); removeFlowTrack(' + t.id + ')">×</button></div>'
+  ).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function playFlowTrack(index) {
+  if (!flowAudio) flowAudio = document.getElementById('flowAudioPlayer');
+  if (index < 0 || index >= flowTracks.length) return;
+
+  // Detener música procedural si está sonando
+  if (musicPlaying) {
+    stopMusic();
+    musicPlaying = false;
   }
-  else if (track.type === 'rain') {
-    // Lluvia de estrellas - arpegios descendentes
-    const base = 659.25;
-    playTone(base, now, 1.5, 0.3, 'sine');
-    playTone(base * 0.75, now + 0.3, 1.5, 0.25, 'sine');
-    playTone(base * 0.5, now + 0.6, 1.5, 0.2, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2000);
-  }
-  else if (track.type === 'zen') {
-    // Drones zen - notas largas y profundas
-    const drones = [130.81, 164.81, 196.00];
-    drones.forEach(function(d, i) {
-      playTone(d, now + i * 0.5, 6.0, 0.2 - i * 0.03, 'triangle');
-    });
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 5500);
-  }
-  else if (track.type === 'forest') {
-    // Bosque - patrón orgánico impredecible
-    const scale = [329.63, 392.00, 440.00, 523.25, 587.33];
-    const note = scale[Math.floor(Math.random() * scale.length)];
-    const dur = 1.5 + Math.random() * 2;
-    playTone(note, now, dur, 0.3, 'triangle');
-    if (Math.random() > 0.5) {
-      playTone(note * 1.25, now + 0.2, dur * 0.7, 0.15, 'sine');
+
+  flowCurrentIndex = index;
+  const track = flowTracks[index];
+  const blob = new Blob([track.data], { type: track.type || 'audio/mpeg' });
+  const url = URL.createObjectURL(blob);
+
+  flowAudio.src = url;
+  flowAudio.play().then(() => {
+    flowIsPlaying = true;
+    updateFlowPlayerUI();
+    document.getElementById('musicToggle').classList.add('playing');
+    document.getElementById('musicIcon').textContent = '♪';
+  }).catch(e => {
+    console.error(e);
+    showToast('Error al reproducir. Intenta de nuevo.');
+  });
+
+  flowAudio.onended = () => {
+    if (flowCurrentIndex < flowTracks.length - 1) {
+      playFlowTrack(flowCurrentIndex + 1);
+    } else {
+      flowIsPlaying = false;
+      updateFlowPlayerUI();
+      document.getElementById('musicToggle').classList.remove('playing');
+      document.getElementById('musicIcon').textContent = '♫';
     }
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, dur * 1000 + 500);
-  }
-  else if (track.type === 'waves') {
-    // Olas - movimiento suave entre dos notas
-    const n1 = 261.63, n2 = 329.63;
-    playTone(n1, now, 3.0, 0.25, 'sine');
-    playTone(n2, now + 1.5, 3.0, 0.25, 'sine');
-    playTone(n1 * 0.5, now, 4.0, 0.15, 'triangle');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 3500);
-  }
-  else if (track.type === 'sunrise') {
-    // Amanecer - progresión ascendente
-    const chord = [261.63, 329.63, 392.00, 523.25];
-    playChord(chord, now, 4.0, 0.3, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 4500);
-  }
-  else if (track.type === 'night') {
-    // Noche estrellada - lenta y contemplativa
-    const scale = [220.00, 261.63, 293.66, 329.63, 392.00];
-    const note = scale[Math.floor(Math.random() * scale.length)];
-    playTone(note, now, 4.0, 0.3, 'sine');
-    playTone(note * 1.5, now + 0.5, 3.5, 0.12, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 5000);
-  }
-  else if (track.type === 'garden') {
-    // Jardín japonés - pentatónica oriental
-    const scale = [392.00, 440.00, 523.25, 587.33, 659.25];
-    const pattern = [0, 1, 2, 1, 0, 3, 4, 3, 2, 1];
-    const i = Math.floor(Date.now() / 1800) % pattern.length;
-    const note = scale[pattern[i]];
-    playTone(note, now, 2.0, 0.35, 'triangle');
-    playTone(note * 2, now + 0.15, 1.5, 0.1, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2000);
-  }
+  };
+
+  flowAudio.ontimeupdate = updateFlowProgress;
+  renderFlowList();
 }
 
-function stopMusic() {
-  if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
-  if (musicNodes) {
-    musicNodes.forEach(function(n) {
-      try { if (n.osc) n.osc.stop(); } catch(e){}
-      try { if (n.gain) n.gain.disconnect(); } catch(e){}
-      try { if (n.osc) n.osc.disconnect(); } catch(e){}
+function toggleFlowPlay() {
+  if (!flowAudio || flowCurrentIndex === -1) {
+    if (flowTracks.length) playFlowTrack(0);
+    return;
+  }
+  if (flowAudio.paused) {
+    flowAudio.play();
+    flowIsPlaying = true;
+    document.getElementById('musicToggle').classList.add('playing');
+    document.getElementById('musicIcon').textContent = '♪';
+  } else {
+    flowAudio.pause();
+    flowIsPlaying = false;
+    document.getElementById('musicToggle').classList.remove('playing');
+    document.getElementById('musicIcon').textContent = '♫';
+  }
+  updateFlowPlayerUI();
+}
+
+function playFlowPrev() {
+  if (flowCurrentIndex > 0) playFlowTrack(flowCurrentIndex - 1);
+  else if (flowTracks.length) playFlowTrack(flowTracks.length - 1);
+}
+
+function playFlowNext() {
+  if (flowCurrentIndex < flowTracks.length - 1) playFlowTrack(flowCurrentIndex + 1);
+  else if (flowTracks.length) playFlowTrack(0);
+}
+
+function updateFlowPlayerUI() {
+  const nameEl = document.getElementById('flowNowPlaying');
+  if (nameEl) {
+    const name = flowCurrentIndex >= 0 ? flowTracks[flowCurrentIndex].name : 'Ninguna canción seleccionada';
+    nameEl.innerHTML = '<span>Reproduciendo:</span> ' + escapeHtml(name);
+  }
+  const btn = document.getElementById('flowPlayBtn');
+  if (btn) btn.textContent = (flowAudio && !flowAudio.paused) ? '⏸' : '▶';
+  renderFlowList();
+}
+
+function updateFlowProgress() {
+  if (!flowAudio) return;
+  const pct = flowAudio.duration ? (flowAudio.currentTime / flowAudio.duration) * 100 : 0;
+  const fill = document.getElementById('flowProgressFill');
+  if (fill) fill.style.width = pct + '%';
+  const ct = document.getElementById('flowCurrentTime');
+  if (ct) ct.textContent = formatTime(flowAudio.currentTime);
+  const dur = document.getElementById('flowDuration');
+  if (dur) dur.textContent = formatTime(flowAudio.duration || 0);
+
+  // Visualizer simple
+  const bars = document.querySelectorAll('.visualizer .bar');
+  if (flowAudio && !flowAudio.paused) {
+    bars.forEach((bar) => {
+      const h = 4 + Math.random() * 20;
+      bar.style.height = h + 'px';
+      bar.style.opacity = 0.6 + Math.random() * 0.4;
     });
-    musicNodes = [];
+  } else {
+    bars.forEach(bar => { bar.style.height = '4px'; bar.style.opacity = '0.3'; });
   }
 }
 
+function formatTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+function seekFlow(e) {
+  if (!flowAudio || !flowAudio.duration) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  flowAudio.currentTime = pct * flowAudio.duration;
+}
+
+function setFlowVolume(v) {
+  if (flowAudio) flowAudio.volume = v;
+}
+
+async function removeFlowTrack(id) {
+  await deleteFlowTrack(id);
+  if (flowAudio && !flowAudio.paused) {
+    flowAudio.pause();
+    flowAudio.src = '';
+    flowIsPlaying = false;
+    document.getElementById('musicToggle').classList.remove('playing');
+    document.getElementById('musicIcon').textContent = '♫';
+  }
+  if (flowCurrentIndex >= flowTracks.length - 1) flowCurrentIndex = -1;
+  await refreshFlowList();
+  updateFlowPlayerUI();
+  showToast('Canción eliminada');
+}
+
+function handleFlowFiles(files) {
+  const audioFiles = Array.from(files).filter(f => f.type.startsWith('audio/'));
+  if (!audioFiles.length) { showToast('Selecciona archivos de audio (MP3, WAV, OGG)'); return; }
+
+  let loaded = 0;
+  audioFiles.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        await addFlowTrack(file.name, e.target.result, file.type);
+        loaded++;
+        if (loaded === audioFiles.length) {
+          await refreshFlowList();
+          showToast(loaded + ' canción(es) agregada(s) a tu biblioteca');
+          updateFlowPlayerUI();
+        }
+      } catch (err) {
+        showToast('Error guardando: ' + file.name);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
