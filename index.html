@@ -507,6 +507,9 @@
 </style>
 <base target="_blank">
 <base target="_blank">
+<base target="_blank">
+<base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <div class="app">
@@ -982,7 +985,13 @@
 let currentTool = 'draw', currentStitch = 'X';
 let currentYarn = { name: 'Rojo Terracota', hex: '#c0392b', bg: '#f5d6d3' };
 let isDrawing = false, gridRows = 16, gridCols = 16, history = [];
-let designs = JSON.parse(localStorage.getItem('crochet_designs_v3') || '[]');
+var designs = [];
+try {
+  designs = JSON.parse(localStorage.getItem('crochet_designs_v3') || '[]');
+} catch(e) {
+  console.warn('localStorage no disponible:', e);
+  designs = [];
+}
 
 if (!designs.length) {
   designs = [
@@ -1052,10 +1061,14 @@ const sizeData = {
 };
 
 function init() {
-  renderPalette(); renderColorPalette(); renderSymbols();
-  renderTemplates(); renderDesigns(); calculate(); calculateMaterials();
-  renderGrid(); saveHistory();
-  initFlowDB().then(function() { console.log('Flow DB ready'); }).catch(function() {});
+  try {
+    renderPalette(); renderColorPalette(); renderSymbols();
+    renderTemplates(); renderDesigns(); calculate(); calculateMaterials();
+    renderGrid(); saveHistory();
+  } catch(e) {
+    console.error('Error en inicialización:', e);
+  }
+  initFlowDB().then(function() { console.log('Flow DB ready'); }).catch(function(e) { console.warn('Flow DB error:', e); });
 }
 
 function renderPalette() {
@@ -1253,7 +1266,13 @@ function startDesign(type) {
   showScreen('editor');
 }
 
-function saveDesigns() { localStorage.setItem('crochet_designs_v3', JSON.stringify(designs)); }
+function saveDesigns() {
+  try {
+    localStorage.setItem('crochet_designs_v3', JSON.stringify(designs));
+  } catch(e) {
+    console.warn('No se pudo guardar en localStorage:', e);
+  }
+}
 
 function renderMiniGrid(gridState, container) {
   if (!gridState || !gridState.length) {
@@ -1619,7 +1638,11 @@ function copySupportMsg() {
   document.execCommand('copy');
   showToast('Mensaje copiado al portapapeles');
 }
-function closeModal() { document.getElementById('modalBg').classList.remove('active'); }
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('active');
+  var mt = document.getElementById('modalText');
+  if (mt) mt.style.display = '';
+}
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
@@ -1697,15 +1720,25 @@ var flowDB = null;
 
 function initFlowDB() {
   return new Promise(function(resolve, reject) {
-    var req = indexedDB.open('CrochetStudioFlow', 1);
-    req.onerror = function() { reject(req.error); };
-    req.onsuccess = function() { flowDB = req.result; resolve(flowDB); };
-    req.onupgradeneeded = function(e) {
-      var db = e.target.result;
-      if (!db.objectStoreNames.contains('tracks')) {
-        db.createObjectStore('tracks', { keyPath: 'id', autoIncrement: true });
-      }
-    };
+    if (!window.indexedDB) {
+      console.warn('IndexedDB no soportado');
+      resolve(null);
+      return;
+    }
+    try {
+      var req = indexedDB.open('CrochetStudioFlow', 1);
+      req.onerror = function() { reject(req.error); };
+      req.onsuccess = function() { flowDB = req.result; resolve(flowDB); };
+      req.onupgradeneeded = function(e) {
+        var db = e.target.result;
+        if (!db.objectStoreNames.contains('tracks')) {
+          db.createObjectStore('tracks', { keyPath: 'id', autoIncrement: true });
+        }
+      };
+    } catch(e) {
+      console.warn('Error abriendo IndexedDB:', e);
+      resolve(null);
+    }
   });
 }
 
