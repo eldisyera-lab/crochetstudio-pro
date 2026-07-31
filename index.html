@@ -980,12 +980,12 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script><script><script><script>
 let currentTool = 'draw', currentStitch = 'X';
 let currentYarn = { name: 'Rojo Terracota', hex: '#c0392b', bg: '#f5d6d3' };
 let isDrawing = false, gridRows = 16, gridCols = 16, history = [];
 let designs = JSON.parse(localStorage.getItem('crochet_designs_v3') || '[]');
-let musicPlaying = false, audioCtx = null, musicNodes = [];
+let musicPlaying = false;
 
 if (!designs.length) {
   designs = [
@@ -1633,40 +1633,15 @@ function toggleCheck(el) {
   el.classList.toggle('checked');
 }
 
-/* MUSIC - Web Audio API Biblioteca v1 */
-let masterGain = null, musicTimer = null, currentTrack = 0;
 
-const musicLibrary = [
-  { name: 'Campanitas de cristal', type: 'bells', desc: 'Notas suaves tipo carillón' },
-  { name: 'Flauta de pan', type: 'flute', desc: 'Melodía etérea y ligera' },
-  { name: 'Lluvia de estrellas', type: 'rain', desc: 'Arpegios descendientes calmantes' },
-  { name: 'Meditación zen', type: 'zen', desc: 'Drones profundos y armónicos' },
-  { name: 'Bosque tranquilo', type: 'forest', desc: 'Patrón orgánico y natural' },
-  { name: 'Olas del mar', type: 'waves', desc: 'Movimiento suave y continuo' },
-  { name: 'Amanecer', type: 'sunrise', desc: 'Progresión ascendente de acordes' },
-  { name: 'Noche estrellada', type: 'night', desc: 'Lenta y contemplativa' },
-  { name: 'Jardín japonés', type: 'garden', desc: 'Pentatónica oriental suave' },
-  { name: 'Silencio', type: 'none', desc: 'Sin música' }
-];
 
-function ensureAudioCtx() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.35;
-    masterGain.connect(audioCtx.destination);
-  }
-  if (audioCtx.state === 'suspended') {
-    return audioCtx.resume();
-  }
-  return Promise.resolve();
-}
+
+
 
 function toggleMusic() {
-  if (musicPlaying || (flowAudio && !flowAudio.paused)) {
-    stopMusic();
-    if (flowAudio) { flowAudio.pause(); flowIsPlaying = false; }
-    musicPlaying = false;
+  if (flowAudio && !flowAudio.paused) {
+    flowAudio.pause();
+    flowIsPlaying = false;
     document.getElementById('musicToggle').classList.remove('playing');
     document.getElementById('musicIcon').textContent = '♫';
     showToast('Música pausada');
@@ -1676,21 +1651,10 @@ function toggleMusic() {
 }
 
 function showMusicMenu() {
-  document.getElementById('modalTitle').textContent = '♪ Biblioteca de música';
+  document.getElementById('modalTitle').textContent = '🎧 Mi Biblioteca Flow';
   document.getElementById('modalText').style.display = 'none';
 
-  var ambientHTML = '<div class="music-tabs">' +
-    '<button class="music-tab active" onclick="switchMusicTab(\'ambient\', this)">🎹 Ambiental</button>' +
-    '<button class="music-tab" onclick="switchMusicTab(\'flow\', this)">🎧 Mi Biblioteca Flow</button>' +
-    '</div>' +
-    '<div id="tab-ambient" class="flow-section active">' +
-    '<p style="color:var(--text-secondary); font-size:13px; margin-bottom:12px;">Música generada por IA interna. No necesita internet ni archivos.</p>' +
-    '<div class="export-options" id="ambientTrackList"></div>' +
-    '<div style="margin-top:12px; text-align:center;">' +
-    '<button class="btn-primary" style="width:auto; padding:10px 24px;" id="ambientPlayBtn" onclick="playAmbientFromMenu()">Reproducir selección</button>' +
-    '</div>' +
-    '</div>' +
-    '<div id="tab-flow" class="flow-section">' +
+  var flowHTML = 
     '<div class="drop-zone" id="flowDropZone">' +
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>' +
     '<p><strong>Arrastra tus MP3 aquí</strong></p><p style="font-size:12px; margin-top:4px;">o haz clic para seleccionar archivos</p>' +
@@ -1707,19 +1671,9 @@ function showMusicMenu() {
     '<button class="player-btn" onclick="playFlowNext()">⏭</button>' +
     '</div>' +
     '<div class="volume-wrap"><span>🔊</span><input type="range" class="volume-slider" min="0" max="1" step="0.05" value="1" oninput="setFlowVolume(this.value)"></div>' +
-    '</div>' +
     '</div>';
 
-  document.getElementById('modalBody').innerHTML = ambientHTML;
-
-  var ambientList = document.getElementById('ambientTrackList');
-  ambientList.innerHTML = musicLibrary.map(function(track, i) {
-    var sel = i === currentTrack ? 'checked' : '';
-    return '<div class="export-option" onclick="selectAmbientTrack(' + i + ')">' +
-      '<input type="radio" name="track" id="a' + i + '" ' + sel + '>' +
-      '<label><strong>' + track.name + '</strong><br><small>' + track.desc + '</small></label>' +
-      '</div>';
-  }).join('');
+  document.getElementById('modalBody').innerHTML = flowHTML;
 
   document.getElementById('modalConfirm').textContent = 'Cerrar';
   document.getElementById('modalConfirm').classList.remove('primary');
@@ -1736,174 +1690,6 @@ function showMusicMenu() {
   dz.ondragleave = function() { dz.classList.remove('dragover'); };
   dz.ondrop = function(e) { e.preventDefault(); dz.classList.remove('dragover'); handleFlowFiles(e.dataTransfer.files); };
 }
-
-function switchMusicTab(tab, btn) {
-  document.querySelectorAll('.music-tab').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
-  document.querySelectorAll('.flow-section').forEach(function(s) { s.classList.remove('active'); });
-  document.getElementById('tab-' + tab).classList.add('active');
-}
-
-function selectAmbientTrack(idx) {
-  currentTrack = idx;
-  document.querySelectorAll('input[name="track"]').forEach(function(r, i) { r.checked = i === idx; });
-}
-
-function playAmbientFromMenu() {
-  if (musicLibrary[currentTrack].type === 'none') {
-    stopMusic();
-    musicPlaying = false;
-    document.getElementById('musicToggle').classList.remove('playing');
-    document.getElementById('musicIcon').textContent = '♫';
-    showToast('Música detenida');
-  } else {
-    startTrack(currentTrack);
-  }
-  closeModal();
-}
-
-function selectTrack(idx) {
-  currentTrack = idx;
-  document.querySelectorAll('input[name="track"]').forEach(function(r, i) { r.checked = i === idx; });
-}
-
-function startTrack(idx) {
-  ensureAudioCtx().then(function() {
-    if (flowAudio && !flowAudio.paused) {
-      flowAudio.pause();
-      flowIsPlaying = false;
-    }
-    stopMusic();
-    currentTrack = idx;
-    musicPlaying = true;
-    document.getElementById('musicToggle').classList.add('playing');
-    document.getElementById('musicIcon').textContent = '♪';
-    showToast('Reproduciendo: ' + musicLibrary[idx].name);
-    playTrackPattern(idx);
-  }).catch(function(e) {
-    console.error('Audio error:', e);
-    showToast('No se pudo iniciar el audio. Intenta de nuevo.');
-  });
-}
-
-function playTone(freq, time, duration, volume, type) {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type || 'sine';
-  osc.frequency.value = freq;
-  gain.gain.setValueAtTime(0, time);
-  gain.gain.linearRampToValueAtTime(volume, time + 0.15);
-  gain.gain.setValueAtTime(volume, time + duration - 0.3);
-  gain.gain.exponentialRampToValueAtTime(0.001, time + duration);
-  osc.connect(gain);
-  gain.connect(masterGain);
-  osc.start(time);
-  osc.stop(time + duration);
-  musicNodes.push({osc: osc, gain: gain});
-}
-
-function playChord(freqs, time, duration, volume, type) {
-  freqs.forEach(function(f, i) {
-    playTone(f, time + i * 0.08, duration, volume * (0.6 - i * 0.1), type);
-  });
-}
-
-function playTrackPattern(idx) {
-  if (!musicPlaying) return;
-  const now = audioCtx.currentTime;
-  const track = musicLibrary[idx];
-
-  if (track.type === 'bells') {
-    // Campanitas - escala pentatónica, notas espaciadas
-    const scale = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
-    const note = scale[Math.floor(Math.random() * scale.length)];
-    playTone(note, now, 2.5, 0.4, 'sine');
-    playTone(note * 1.5, now + 0.1, 2.0, 0.15, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2800);
-  }
-  else if (track.type === 'flute') {
-    // Flauta - melodía suave con legato
-    const scale = [392.00, 440.00, 493.88, 523.25, 587.33, 659.25];
-    const pattern = [0, 2, 4, 3, 1, 3, 2, 0];
-    const i = Math.floor(Date.now() / 2000) % pattern.length;
-    const note = scale[pattern[i]];
-    playTone(note, now, 3.0, 0.35, 'triangle');
-    playTone(note * 2, now + 0.2, 2.5, 0.12, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2200);
-  }
-  else if (track.type === 'rain') {
-    // Lluvia de estrellas - arpegios descendentes
-    const base = 659.25;
-    playTone(base, now, 1.5, 0.3, 'sine');
-    playTone(base * 0.75, now + 0.3, 1.5, 0.25, 'sine');
-    playTone(base * 0.5, now + 0.6, 1.5, 0.2, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2000);
-  }
-  else if (track.type === 'zen') {
-    // Drones zen - notas largas y profundas
-    const drones = [130.81, 164.81, 196.00];
-    drones.forEach(function(d, i) {
-      playTone(d, now + i * 0.5, 6.0, 0.2 - i * 0.03, 'triangle');
-    });
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 5500);
-  }
-  else if (track.type === 'forest') {
-    // Bosque - patrón orgánico impredecible
-    const scale = [329.63, 392.00, 440.00, 523.25, 587.33];
-    const note = scale[Math.floor(Math.random() * scale.length)];
-    const dur = 1.5 + Math.random() * 2;
-    playTone(note, now, dur, 0.3, 'triangle');
-    if (Math.random() > 0.5) {
-      playTone(note * 1.25, now + 0.2, dur * 0.7, 0.15, 'sine');
-    }
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, dur * 1000 + 500);
-  }
-  else if (track.type === 'waves') {
-    // Olas - movimiento suave entre dos notas
-    const n1 = 261.63, n2 = 329.63;
-    playTone(n1, now, 3.0, 0.25, 'sine');
-    playTone(n2, now + 1.5, 3.0, 0.25, 'sine');
-    playTone(n1 * 0.5, now, 4.0, 0.15, 'triangle');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 3500);
-  }
-  else if (track.type === 'sunrise') {
-    // Amanecer - progresión ascendente
-    const chord = [261.63, 329.63, 392.00, 523.25];
-    playChord(chord, now, 4.0, 0.3, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 4500);
-  }
-  else if (track.type === 'night') {
-    // Noche estrellada - lenta y contemplativa
-    const scale = [220.00, 261.63, 293.66, 329.63, 392.00];
-    const note = scale[Math.floor(Math.random() * scale.length)];
-    playTone(note, now, 4.0, 0.3, 'sine');
-    playTone(note * 1.5, now + 0.5, 3.5, 0.12, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 5000);
-  }
-  else if (track.type === 'garden') {
-    // Jardín japonés - pentatónica oriental
-    const scale = [392.00, 440.00, 523.25, 587.33, 659.25];
-    const pattern = [0, 1, 2, 1, 0, 3, 4, 3, 2, 1];
-    const i = Math.floor(Date.now() / 1800) % pattern.length;
-    const note = scale[pattern[i]];
-    playTone(note, now, 2.0, 0.35, 'triangle');
-    playTone(note * 2, now + 0.15, 1.5, 0.1, 'sine');
-    musicTimer = setTimeout(function() { playTrackPattern(idx); }, 2000);
-  }
-}
-
-function stopMusic() {
-  if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
-  if (musicNodes) {
-    musicNodes.forEach(function(n) {
-      try { if (n.osc) n.osc.stop(); } catch(e){}
-      try { if (n.gain) n.gain.disconnect(); } catch(e){}
-      try { if (n.osc) n.osc.disconnect(); } catch(e){}
-    });
-    musicNodes = [];
-  }
-}
-
 
 // === MI BIBLIOTECA FLOW ===
 var flowTracks = [];
@@ -2016,8 +1802,7 @@ function playFlowTrack(index) {
   if (index < 0 || index >= flowTracks.length) return;
 
   if (musicPlaying) {
-    stopMusic();
-    musicPlaying = false;
+
   }
 
   flowCurrentIndex = index;
